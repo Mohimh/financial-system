@@ -1,0 +1,165 @@
+用户管理模块
+1. 用户注册
+POST /api/user/register
+使用表：users
+描述：允许新用户向系统注册账号，提交包括用户名、密码等基本信息。
+2. 用户登录
+POST /api/user/login
+使用表：users
+描述：允许已注册用户通过用户名和密码登录系统，获取访问令牌（token）。
+3. 获取用户列表
+GET /api/user/list
+使用表：users、roles、departments
+描述：管理员获取系统中所有用户的列表信息，包括用户ID、用户名、角色等基本信息。
+4. 添加用户
+POST /api/user/add
+使用表：users
+描述：管理员向系统中添加新用户，设置用户的初始信息，如用户名、密码、所属部门和角色等。
+5. 修改用户信息
+PUT /api/user/update
+使用表：users
+描述：允许用户或管理员修改用户的个人信息，如姓名、联系方式等。
+6. 删除用户
+DELETE /api/user/delete/:id
+使用表：users
+描述：管理员从系统中删除指定的用户，需谨慎操作，删除后用户将无法访问系统。
+7. 用户状态变更
+PUT /api/user/status/:id
+使用表：users
+描述：管理员可以启用或禁用用户的账号，控制用户是否能够登录和使用系统。
+8. 用户角色分配
+PUT /api/user/role/:id
+使用表：users、roles
+描述：管理员为用户分配或更改角色，以确定用户在系统中的权限。
+9. 用户密码重置
+PUT /api/user/password/:id
+使用表：users
+描述：用户或管理员可以重置用户的密码，用于密码丢失或定期更换密码的情况。
+财务报表模块
+10. 报表类型获取
+GET /api/report/types
+使用表：无（报表类型通常在代码中定义）
+描述：获取系统支持的所有财务报表类型，如资产负债表、利润表等。
+11. 报表生成
+POST /api/report/generate
+使用表：reports、income_records、expense_records、budget_categories、accounts、departments
+描述：根据用户选择的报表类型和时间范围等参数，生成对应的财务报表。
+12. 报表查询
+GET /api/report/list
+使用表：reports
+描述：用户可以根据报表名称、类型、生成时间等条件，查询已生成的报表。
+13. 报表下载
+GET /api/report/download/:id
+使用表：reports
+描述：提供报表的下载功能，允许用户将报表保存到本地。
+14. 报表分享
+POST /api/report/share/:id
+使用表：reports、users
+描述：允许用户将报表分享给有权限查看的其他用户或部门。
+15. 报表更新（可选）
+PUT /api/report/update/:id
+使用表：reports
+描述：在某些情况下，如财务数据有误需要修正时，可以对已生成的报表数据进行更新，但需要严格控制权限。
+财务核心模块
+16. 科目管理 - 查询科目列表
+GET /api/finance/chartOfAccounts
+使用表：chart_of_accounts
+描述：获取财务科目列表，包括科目编码、科目名称、科目类型等信息。
+17. 科目管理 - 添加科目
+POST /api/finance/chartOfAccounts/create
+使用表：chart_of_accounts
+描述：添加新的财务科目，需要提供科目的详细信息，如科目编码、科目名称、科目类型等。
+18. 科目管理 - 修改科目
+PUT /api/finance/chartOfAccounts/update/:id
+使用表：chart_of_accounts
+描述：修改指定科目的信息，如科目名称、科目类型等。
+19. 科目管理 - 删除科目
+DELETE /api/finance/chartOfAccounts/delete/:id
+使用表：chart_of_accounts
+描述：删除指定的财务科目，需谨慎操作，确保科目下无未结清的业务。
+20. 凭证管理 - 获取凭证列表
+GET /api/finance/vouchers/list
+使用表：vouchers
+描述：根据日期范围、凭证类型等条件，查询凭证列表。
+21. 凭证管理 - 创建凭证
+POST /api/finance/vouchers/create
+使用表：vouchers、chart_of_accounts
+描述：创建新的记账凭证，需要提供凭证的日期、摘要、涉及的会计科目及借贷方金额等信息。
+22. 凭证管理 - 审核凭证
+PUT /api/finance/vouchers/review/:id
+使用表：vouchers
+描述：对凭证进行审核操作，审核状态可包括未审核、审核中、已审核等。
+23. 账簿查询 - 查询总账
+GET /api/finance/ledgers/general/:accountId
+使用表：general_ledgers
+描述：根据会计科目ID查询该科目的总账信息。
+24. 账簿查询 - 查询明细账
+GET /api/finance/ledgers/detail/:accountId
+使用表：detail_ledgers
+描述：根据会计科目ID查询该科目的明细账信息。
+25. 财务分析指标计算
+POST /api/finance/analysis/indicators
+使用表：income_records、expense_records、accounts、chart_of_accounts
+描述：根据用户指定的时间范围、涉及的科目范围等参数，计算财务分析指标，如流动比率、速动比率等。
+26. 预算管理 - 获取预算列表
+GET /api/finance/budget/list
+使用表：budgets
+描述：查询预算列表，支持按部门、年份、月份等条件筛选。
+27. 预算管理 - 添加预算
+POST /api/finance/budget/add
+使用表：budgets
+描述：添加新的预算记录，包括部门、年份、月份、预算金额等信息。
+28. 预算管理 - 修改预算
+PUT /api/finance/budget/update/:id
+使用表：budgets
+描述：修改指定的预算记录，如调整预算金额。
+29. 预算管理 - 预算执行情况查询
+GET /api/finance/budget/execution/:id
+使用表：budgets、income_records、expense_records
+描述：查询预算的执行情况，包括已用金额、剩余金额等信息。
+报销审批模块
+30. 报销单创建
+POST /api/reimburse/create
+使用表：reimbursements、reimbursement_items、users、budget_categories
+描述：员工提交新的报销单，需要填写报销信息，如报销金额、报销事由等。
+31. 报销单查询
+GET /api/reimburse/list
+使用表：reimbursements、users
+描述：员工可以查询自己提交的报销单，管理员可以查询所有报销单，支持按报销状态、日期等条件筛选。
+32. 审批流程管理 - 获取审批流程
+GET /api/reimburse/approval/process/:reimburseId
+使用表：reimbursements、users
+描述：获取指定报销单的审批流程信息，包括审批人、审批状态等。
+33. 审批流程管理 - 进行审批
+PUT /api/reimburse/approval/:reimburseId
+使用表：reimbursements、users
+描述：审批人对报销单进行审批操作，可以批准、拒绝或转交。
+34. 报销统计
+GET /api/reimburse/statistics
+使用表：reimbursements、departments
+描述：对报销数据进行统计分析，如按部门、时间段统计报销金额等。
+系统管理模块
+35. 系统配置获取
+GET /api/system/config
+使用表：sys_configs
+描述：获取系统的各种配置信息，如财务期间设置、货币单位等。
+36. 系统配置修改
+PUT /api/system/config
+使用表：sys_configs
+描述：修改系统配置，需要管理员权限。
+37. 日志管理 - 获取操作日志
+GET /api/system/logs
+使用表：operation_logs
+描述：查询系统操作日志，支持按用户、操作时间等条件筛选。
+38. 日志管理 - 清空日志
+DELETE /api/system/logs/clear
+使用表：operation_logs
+描述：清空操作日志，需谨慎操作，通常用于日志备份后的清理。
+39. 数据备份与恢复 - 触发数据备份
+POST /api/system/backup
+使用表：无（通常由数据库管理系统处理）
+描述：手动触发数据备份操作，系统会按照配置的策略进行备份。
+40. 数据备份与恢复 - 数据恢复
+POST /api/system/restore
+使用表：无（通常由数据库管理系统处理）
+描述：从备份文件中恢复数据，需要选择备份文件并确认恢复操作。
