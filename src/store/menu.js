@@ -1,7 +1,28 @@
 const state = {
     isCollapse: false,
     selectMenu: [],
-    routerList: []
+    routerList: [
+        {
+        path: 'home',
+        meta: { id: '0', name: 'logo', path: '/home'},
+        },
+        {
+        path: 'home',
+        meta: { id: '1', name: '首页', icon: 'HomeFilled', path: '/home'},
+        },
+        {
+        path: 'department',
+        meta: { id: '2', name: '部门信息', icon: 'Postcard', path: '/department'},
+        },
+        {
+        path: 'stuff',
+        meta: { id: '3', name: '员工管理', icon: 'User', path: '/stuff'},
+        },
+        {
+        path: 'salary',
+        meta: { id: '4', name: '工资管理', icon: 'ScaleToOriginal', path: '/salary'},
+        }
+    ]
 }
 
 const mutations = {
@@ -37,6 +58,9 @@ const mutations = {
         routerSet(payload)
         // 拿到完整的路由数据
         state.routerList = payload
+    },
+    updateMenuActive(state, payload) {
+        state.menuActive = payload
     }
 }
 

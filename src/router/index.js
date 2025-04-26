@@ -2,6 +2,10 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 import Layout from '@/views/main.vue'
 import Login from '@/views/login/index.vue'
+import Home from '@/views/home/index.vue'
+import Department from '@/views/department/index.vue'
+import Stuff from '@/views/stuff/index.vue'
+import Salary from '@/views/salary/index.vue'
 
 const routes = [
   {
@@ -10,10 +14,30 @@ const routes = [
     name: 'main',
     children: [
       {
-        path: 'main',
-        meta: { id: '1', name: '主界面', path: '/main'},
-        component: Dashboard
+        path: 'home',
+        meta: { id: '0', name: 'logo', path: '/home'},
+        component: Home
       },
+      {
+        path: 'home',
+        meta: { id: '1', name: '首页', icon: 'HomeFilled', path: '/home'},
+        component: Home
+      },
+      {
+        path: 'department',
+        meta: { id: '2', name: '部门信息', icon: 'Postcard', path: '/department'},
+        component: Department
+      },
+      {
+        path: 'stuff',
+        meta: { id: '3', name: '员工管理', icon: 'User', path: '/stuff'},
+        component: Stuff
+      },
+      {
+        path: 'salary',
+        meta: { id: '4', name: '工资管理', icon: 'ScaleToOriginal', path: '/salary'},
+        component: Salary
+      }
     //   {
     //     path: 'auth',
     //     meta: { id: '2' ,name: '权限管理', icon: 'Grid' },

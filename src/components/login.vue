@@ -141,7 +141,7 @@ import { ref, reactive, computed, toRaw } from 'vue'
 import { UserFilled, Lock, Hide, View } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
 import { ElMessage } from 'element-plus'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 // const imgUrl = new URL('../../../public/291cbd1565c3b7928389850d8e2990b928762a4561a8a5bea.jpg', import.meta.url).href
@@ -292,9 +292,9 @@ const countdownChange = () => {
     // })
 }
 
-// const router = useRouter()
-// const loginFormRef = ref()
-// const store = useStore()
+const router = useRouter()
+const loginFormRef = ref()
+console.log('loginform', loginFormRef)
 
 // const routerList = computed(() => store.state.menu.routerList)
 // 表单提交 
@@ -336,6 +336,36 @@ const countdownChange = () => {
 //         }
 //     })
 // }
+
+
+// 登录
+const submitForm = async(formEl) => {
+    if (!formEl) return
+    // 手动触发校验
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (formPage.value === 0) {
+
+                ElMessage({
+                    message: '登录成功',
+                    type: 'success',
+                })
+                router.push('/')
+            } 
+            else if (formPage === 1) {
+                
+                ElMessage({
+                    message: '登录成功',
+                    type: 'success',
+                })
+                router.push('/')
+            }
+            
+        } else {
+            console.log('error submit!', fields)
+        }
+    })
+}
 
 </script>
 

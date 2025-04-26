@@ -1,8 +1,7 @@
 <template>
-    <el-row class="box" justify="center" :align="'center'">
+    <el-row class="login-box" justify="center" :align="'center'">
         <el-col :span="8" justify="center" :align="'middle'">
             <!-- <video autoplay muted loop src="../../../public/bochi the rock.mp4"></video> -->
-            <!-- <img :src="imgUrl" alt="" style="height: 600px; align-items: center;"> -->
         </el-col>
         <el-col :span="8" >
             <Login v-show="formType"/>
@@ -27,7 +26,7 @@
 </script>
 
 <style scoped>
-.box {
+.login-box {
     height: 100%;
     width: 100%;
     background-size: cover;
