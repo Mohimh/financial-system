@@ -42,12 +42,19 @@ const homeClick = () => {
         box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05);
         border-bottom: 1px solid transparent;
         .icon {
-            padding-left: 20px;
+            padding: 0 15px;
             height: 100%;
+        }
+        .icon:hover {
+            background-color: #f5f5f5;
+            cursor: pointer;
         }
     }
     .footer {
         height: 40%;
+        .el-button {
+            margin: 0 5px;
+        }
     }
 }
 

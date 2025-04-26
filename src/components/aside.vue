@@ -2,8 +2,6 @@
     <el-menu 
         :style="{ width: !isCollapse ? '200px' : '64px' }"
         class="asider-container" 
-        active-text-color="#ffd04b" 
-        text-color="#000" 
         @open="handleOpen"
         @close="handleClose"
         :collapse="isCollapse"
@@ -49,6 +47,7 @@ const handleClose = () => {
 </script>
 
 <style lang="less" scoped>
+
 .flex-box {
     display: flex;
     height: 100%;
@@ -58,9 +57,13 @@ const handleClose = () => {
 
 .asider-container {
     height: 100%;
-
+    --el-menu-active-color: #eaac1cde;
+    --el-menu-bg-color: #fff;
     .el-menu-item {
         height: 60px;
+    }
+    .el-menu-item:hover {
+        background-color: rgba(11, 7, 7, 0.121);
     }
 }
 </style>
