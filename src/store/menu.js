@@ -3,24 +3,24 @@ const state = {
     selectMenu: [],
     routerList: [
         {
-        path: 'home',
-        meta: { id: '0', name: 'logo', path: '/home'},
+            path: 'home',
+            meta: { id: '1', name: '首页', icon: 'HomeFilled', path: '/home'},
         },
         {
-        path: 'home',
-        meta: { id: '1', name: '首页', icon: 'HomeFilled', path: '/home'},
+            path: 'department',
+            meta: { id: '2', name: '部门信息', icon: 'Postcard', path: '/department'},
         },
         {
-        path: 'department',
-        meta: { id: '2', name: '部门信息', icon: 'Postcard', path: '/department'},
+            path: 'stuff',
+            meta: { id: '3', name: '员工管理', icon: 'User', path: '/stuff'},
         },
         {
-        path: 'stuff',
-        meta: { id: '3', name: '员工管理', icon: 'User', path: '/stuff'},
+            path: 'salary',
+            meta: { id: '4', name: '工资管理', icon: 'ScaleToOriginal', path: '/salary'},
         },
         {
-        path: 'salary',
-        meta: { id: '4', name: '工资管理', icon: 'ScaleToOriginal', path: '/salary'},
+            path: 'reimbursement',
+            meta: { id: '5', name: '日常报销', icon: 'DocumentChecked', path: '/reimbursement'},
         }
     ]
 }

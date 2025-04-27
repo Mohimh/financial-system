@@ -6,6 +6,7 @@
         @close="handleClose"
         :collapse="isCollapse"
     >
+        <p class="logo-lg flex-box">{{isCollapse ? 'logo' : 'LOGO'}}</p>
         <el-menu-item 
             v-for="(item, index) in menuData"
             @click="handleClick(item, `${item.meta.id}`)"
@@ -59,6 +60,11 @@ const handleClose = () => {
     height: 100%;
     --el-menu-active-color: #eaac1cde;
     --el-menu-bg-color: #fff;
+    .logo-lg {
+        height: 60px;
+        width: 100%;
+        pointer-events: none;
+    }
     .el-menu-item {
         height: 60px;
     }

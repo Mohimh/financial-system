@@ -6,6 +6,7 @@ import Home from '@/views/home/index.vue'
 import Department from '@/views/department/index.vue'
 import Stuff from '@/views/stuff/index.vue'
 import Salary from '@/views/salary/index.vue'
+import Reimbursement from '@/views/reimbursement/index.vue'
 
 const routes = [
   {
@@ -13,11 +14,6 @@ const routes = [
     component: Layout,
     name: 'main',
     children: [
-      {
-        path: 'home',
-        meta: { id: '0', name: 'logo', path: '/home'},
-        component: Home
-      },
       {
         path: 'home',
         meta: { id: '1', name: '首页', icon: 'HomeFilled', path: '/home'},
@@ -37,6 +33,11 @@ const routes = [
         path: 'salary',
         meta: { id: '4', name: '工资管理', icon: 'ScaleToOriginal', path: '/salary'},
         component: Salary
+      },
+      {
+        path: 'reimbursement',
+        meta: { id: '5', name: '日常报销', icon: 'DocumentChecked', path: '/reimbursement'},
+        component: Reimbursement
       }
     //   {
     //     path: 'auth',
