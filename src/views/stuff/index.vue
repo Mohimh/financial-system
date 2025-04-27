@@ -9,7 +9,7 @@
             <el-table-column prop="department" label="部门" width="75px"/>
             <el-table-column prop="account" label="账号" width="80px"/>
             <el-table-column prop="name" label="姓名" width="80px"/>
-            <el-table-column prop="gender" label="性别" width="75px">
+            <el-table-column label="性别" width="75px">
                 <template #default="scoped">  
                     <el-tag type="success">
                         {{ scoped.row.gender === '0' ? '男' : '女' }}
