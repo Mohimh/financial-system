@@ -31,10 +31,13 @@ import { useRouter } from 'vue-router';
 const store = useStore()
 const router = useRouter()
 
+// 菜单列表
 const menuData = computed(() => store.state.menu.routerList)
 
+// 菜单收折
 const isCollapse = computed(() => store.state.menu.isCollapse)
 
+// 菜单点击事件
 const handleClick = (item, active) => {
     store.commit('addMenu', item.meta)
     store.commit('updateMenuActive', active)

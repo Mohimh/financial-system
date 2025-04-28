@@ -5,7 +5,7 @@
             <el-icon><CirclePlus/></el-icon>
             新增
         </el-button>
-        <el-table :data="tableData.list" border stripe="true" style="width: auto">
+        <el-table :data="tableData.list" border stripe style="width: auto">
             <el-table-column prop="department" label="部门" width="75px"/>
             <el-table-column prop="account" label="账号" width="80px"/>
             <el-table-column prop="name" label="姓名" width="80px"/>

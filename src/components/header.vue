@@ -44,8 +44,29 @@ const imgUrl = new URL('../../public/sparkle.jpg', import.meta.url).href
 const store = useStore()
 const router = useRouter()
 
+// 首页按钮
 const homeClick = () => {
     router.push('/home')
+}
+
+const handleClick = (command) => {
+    // 个人信息按钮
+    if (command === "infomation") {
+        
+    }
+    
+    // 修改密码按钮
+    if (command === "changeKey") {
+        
+    }
+
+    // 退出登录按钮
+    if (command === "cancel") {
+        // localStorage.removeItem('pz_token')
+        // localStorage.removeItem('pz_userInfo')
+        // localStorage.removeItem('pz_v3pz')
+        // window.location.href = window.location.origin
+    }
 }
 
 
