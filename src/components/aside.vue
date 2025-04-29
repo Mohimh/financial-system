@@ -2,6 +2,7 @@
     <el-menu 
         :style="{ width: !isCollapse ? '200px' : '64px' }"
         class="asider-container" 
+        default-active="1"
         @open="handleOpen"
         @close="handleClose"
         :collapse="isCollapse"

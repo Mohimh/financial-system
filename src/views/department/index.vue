@@ -49,13 +49,13 @@
                 :rules="rules"
             >
                 <el-form-item prop="name" label="名称">
-                    <el-input v-model="form.name" placeholder="请输入部门名称" />
+                    <el-input v-model="form.name" placeholder="请填写部门名称" />
                 </el-form-item>
                 <el-form-item prop="notes" label="备注">
-                    <el-input v-model="form.notes" placeholder="请输入备注" />
+                    <el-input v-model="form.notes" placeholder="请填写备注" />
                 </el-form-item>
                 <el-form-item prop="enter" label="录入时间">
-                    <el-input v-model="form.enter" />
+                    <el-input v-model="form.enter" disabled/>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -120,16 +120,16 @@ const beforeClose = () => {
     formRef.value.resetFields()
 }
 
+const rules = reactive({
+    name: [{ required: true, trigger: 'blur', message: '请填写姓名'}]
+})
+
 const formRef = ref()
 
 const form = reactive({
     name: '',
     notes: '',
     enter: '',
-})
-
-const rules = reactive({
-    name: [{ require: true, trigger: 'blur', message: '请填写姓名'}],
 })
 
 const confirm = async (formEl) => {
