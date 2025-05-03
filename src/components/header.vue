@@ -28,6 +28,16 @@
         </div>
         <div class="footer flex-box">
             <el-button @click="homeClick">首页</el-button>
+            <el-button 
+                v-for="(item, index) in selectMenu" 
+                :key="item.path" 
+                @click="pageClick(item.path)"
+            >
+                <!-- <router-link class="text flex-box" :to="{ path: item.path }"> -->
+                {{ item.name }}
+                <!-- </router-link> -->
+                <el-icon class='close' size="12" @click="closeTab(item, index)"><Close /></el-icon>
+            </el-button>
         </div>
     </div>
     
@@ -37,16 +47,51 @@
 <script setup>
 import { Fold } from '@element-plus/icons-vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { health } from '@/api';
+import { computed } from 'vue';
+
 
 const imgUrl = new URL('../../public/sparkle.jpg', import.meta.url).href
 
 const store = useStore()
+const route = useRoute()
 const router = useRouter()
+const selectMenu = computed(() => store.state.menu.selectMenu)
 
 // 首页按钮
 const homeClick = () => {
     router.push('/home')
+    // health().then(({}) => {
+    //     console.log('接口测试成功')
+    // })
+}
+
+const pageClick = (path) => {
+    router.push(path)
+}
+
+// 点击关闭tag
+const closeTab = (item, index) => {
+    // 删除的非当前行tag
+    store.commit('closeMenu', item)
+    if (route.path !== item.path) {
+        return
+    }
+    const selectMenuData = selectMenu.value
+    if (index === selectMenuData.length) {
+        if (!selectMenuData.length) {
+            router.push('/')
+        } else {
+            router.push({
+                path: selectMenuData[index - 1].path
+            })
+        }
+    } else {
+        router.push({
+            path: selectMenuData[index].path
+        })
+    }
 }
 
 const handleClick = (command) => {
@@ -68,7 +113,6 @@ const handleClick = (command) => {
         // window.location.href = window.location.origin
     }
 }
-
 
 </script>
 
@@ -98,6 +142,36 @@ const handleClick = (command) => {
             .icon:hover {
                 background-color: #f5f5f5;
                 cursor: pointer;
+            }
+            ul {
+                height: 100%;
+            }
+            .tab {
+                padding: 0 10px;
+                height: 100%;
+                .text {
+                    margin: 0 5px;
+                }
+                .close {
+                    visibility: hidden;
+                }
+                &.selected {
+                    a {
+                        color: #409eff;
+                    }
+                    i {
+                        color: #409eff;
+                    }
+                    background-color: #f5f5f5;
+                }
+            }
+            .tab:hover {
+                background-color: #f5f5f5;
+                .close {
+                    visibility: inherit;
+                    cursor: pointer;
+                    color: #000;
+                }
             }
         }
         .top-right {

@@ -62,7 +62,7 @@ const handleClose = () => {
 
 .asider-container {
     height: 100%;
-    --el-menu-active-color: #eaac1cde;
+    --el-menu-active-color: #eaa80eb7;
     --el-menu-bg-color: #fff;
     .logo-lg {
         height: 60px;
@@ -71,6 +71,10 @@ const handleClose = () => {
     }
     .el-menu-item {
         height: 60px;
+        transition: background-color 0.4s;
+        &:active {
+        background-color: rgba(233, 223, 36, 0.797) !important;
+    }
     }
     .el-menu-item:hover {
         background-color: rgba(11, 7, 7, 0.121);

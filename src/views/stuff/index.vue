@@ -86,8 +86,8 @@
                 <el-form-item prop="account" label="账号">
                     <el-input v-model="form.account" disabled />
                 </el-form-item>
-                <el-form-item prop="name" label="名称">
-                    <el-input v-model="form.name" placeholder="请输入员工名称" />
+                <el-form-item prop="name" label="姓名">
+                    <el-input v-model="form.name" placeholder="请输入员工姓名" />
                 </el-form-item>
                 <el-form-item prop="gender" label="性别">
                     <el-switch

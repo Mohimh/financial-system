@@ -26,18 +26,25 @@ const state = {
 }
 
 const mutations = {
+    // 收折侧边栏
     collapseMenu (state) {
         state.isCollapse = !state.isCollapse
     },
+    // 增加导航栏
     addMenu (state, payload) {
+        if (payload.path === '/home') {
+            return
+        }
         if (state.selectMenu.findIndex(item => item.path === payload.path) === -1) {
             state.selectMenu.push(payload)
         }
     },
+    // 删除导航栏
     closeMenu (state, payload) {
         const index = state.selectMenu.findIndex(val => val.name === payload.name)
         state.selectMenu.splice(index, 1)
     },
+    // 
     dynamicMenu (state, payload) {
         console.log(payload)
         // 通过glob导入文件
