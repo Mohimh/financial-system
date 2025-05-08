@@ -52,7 +52,12 @@
                     <el-input v-model="form.name" placeholder="请填写部门名称" />
                 </el-form-item>
                 <el-form-item prop="notes" label="备注">
-                    <el-input v-model="form.notes" placeholder="请填写备注" />
+                    <el-input
+                        v-model="form.notes"
+                        :rows="5"
+                        type="textarea"
+                        placeholder="请填写备注"
+                    />
                 </el-form-item>
                 <el-form-item prop="enter" label="录入时间">
                     <el-input v-model="form.enter" disabled/>
@@ -99,7 +104,10 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
-            Object.assign(form, { name: rowData.name, notes: rowData.notes, enter: rowData.enter})
+            // Object.assign(form, { name: rowData.name, notes: rowData.notes, enter: rowData.enter})
+            Object.assign(form, JSON.parse(JSON.stringify(rowData)))
+        } else {
+            form.enter = new Date().toLocaleString();
         }
     })
 } 

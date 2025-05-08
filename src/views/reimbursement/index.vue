@@ -67,6 +67,11 @@ const paginationData = reactive({
     pageSize: 10
 })
 
+const DEPARTMENT_OPTIONS = [
+    { value: 1, label: '研发部' },
+    { value: 2, label: '销售部' }
+]
+
 const tableData = ({
     list: [
         {

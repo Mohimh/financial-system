@@ -27,10 +27,14 @@
             </div>
         </div>
         <div class="footer flex-box">
-            <el-button @click="homeClick">首页</el-button>
+            <el-button
+                :class="{ 'active': activePath === '/home' }" 
+                @click="homeClick"
+            >首页</el-button>
             <el-button 
                 v-for="(item, index) in selectMenu" 
                 :key="item.path" 
+                :class="{ 'active': activePath === item.path }" 
                 @click="pageClick(item.path)"
             >
                 <!-- <router-link class="text flex-box" :to="{ path: item.path }"> -->
@@ -49,7 +53,7 @@ import { Fold } from '@element-plus/icons-vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import { health } from '@/api';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 
 const imgUrl = new URL('../../public/sparkle.jpg', import.meta.url).href
@@ -58,9 +62,16 @@ const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const selectMenu = computed(() => store.state.menu.selectMenu)
+const activePath = ref(route.path)
+
+// 监听路由变换
+watch(() => route.path, (newPath) => {
+    activePath.value = newPath
+})
 
 // 首页按钮
 const homeClick = () => {
+    activePath.value = '/home'
     router.push('/home')
     // health().then(({}) => {
     //     console.log('接口测试成功')
@@ -68,6 +79,7 @@ const homeClick = () => {
 }
 
 const pageClick = (path) => {
+    activePath.value = path
     router.push(path)
 }
 
@@ -118,6 +130,19 @@ const handleClick = (command) => {
 
 
 <style lang="less" scoped>
+:deep(.el-button) {
+    &.active {
+        background-color: #409eff;
+        color: white;
+        &:hover {
+            background-color: #79bbff;
+        }
+        &:active {
+            background-color: #337ecc;
+        }
+    }
+}
+
 .flex-box {
     display: flex;
     height: 100%;
@@ -142,36 +167,6 @@ const handleClick = (command) => {
             .icon:hover {
                 background-color: #f5f5f5;
                 cursor: pointer;
-            }
-            ul {
-                height: 100%;
-            }
-            .tab {
-                padding: 0 10px;
-                height: 100%;
-                .text {
-                    margin: 0 5px;
-                }
-                .close {
-                    visibility: hidden;
-                }
-                &.selected {
-                    a {
-                        color: #409eff;
-                    }
-                    i {
-                        color: #409eff;
-                    }
-                    background-color: #f5f5f5;
-                }
-            }
-            .tab:hover {
-                background-color: #f5f5f5;
-                .close {
-                    visibility: inherit;
-                    cursor: pointer;
-                    color: #000;
-                }
             }
         }
         .top-right {

@@ -4,18 +4,18 @@
             <!-- 欢迎登录界面 -->
             <p class="welcome">欢迎来到财务管理系统</p>
 
-            <!-- 切换账号登录，手机登录按钮 -->
+            <!-- 切换账号登录，邮箱登录按钮 -->
             <div class="jump-link flex-box">
                 <p>
                     <el-link :type="formPage === 0 ? 'primary' : 'default'" class="id-login" :underline="false"
                         @click="idLogin" style="font-size: 16px;">
-                        账号登录
+                        用户名登录
                     </el-link>
                 </p>
                 <p>
-                    <el-link :type="formPage === 1 ? 'primary' : 'default'" class="phone-login" :underline="false"
-                        @click="phoneLogin" style="font-size: 16px;">
-                        手机号登录
+                    <el-link :type="formPage === 1 ? 'primary' : 'default'" class="email-login" :underline="false"
+                        @click="emailLogin" style="font-size: 16px;">
+                        邮箱登录
                     </el-link>
                 </p>
             </div>
@@ -27,8 +27,8 @@
                     class="id-ruleForm" 
                     :rules="idRules"
                     >
-                    <el-form-item prop="userId">
-                        <el-input v-model="idLoginForm.userId" placeholder="请输入账号名/账号ID" :prefix-icon="UserFilled">
+                    <el-form-item prop="userName">
+                        <el-input v-model="idLoginForm.userName" placeholder="请输入用户名" :prefix-icon="UserFilled">
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="passWord">
@@ -57,51 +57,34 @@
                         <el-link :underline="false">超级管理员</el-link>
                     </div>
                 </el-text>
-
-                <el-divider content-position="center" style="margin-top: 90px;">
-                    <div style="font-size: 12px; font-weight: 400; color: rgb(128, 131, 138);">
-                        其他登录方式
-                    </div>
-                </el-divider>
-                <div class="other-login">
-                    <ul class="flex-box">
-                        <li><el-link>login1</el-link></li>
-                        <li><el-link>login2</el-link></li>
-                        <li><el-link>login3</el-link></li>
-                        <li><el-link>login4</el-link></li>
-                        <li><el-link>login5</el-link></li>
-                        <li><el-link>login6</el-link></li>
-                    </ul>
-                </div>
-                <el-text class="backToRegister-link flex-box"  style="margin-top: 30px;">
-                    没有账号？
-                    <el-link type="primary" :underline="false" @click="changeForm">现在就注册</el-link>
-                </el-text>
             </div>
             
 
-            <!-- 手机登录 -->
+            <!-- 邮箱登录 -->
             <div v-else="formPage">
                 <el-form ref="loginFormRef" 
-                    :model="phoneLoginForm" 
+                    :model="emailLoginForm" 
                     style="max-width: 480px" 
-                    class="phone-ruleForm"
-                    :rules="phoneRules"
+                    class="email-ruleForm"
+                    :rules="emailRules"
                 >
-                    <el-form-item prop="userPhone">
-                        <el-input v-model="phoneLoginForm.userPhone" placeholder="请设置用户名，5-20个字符">
-                            <template #prepend>
-                                <el-select v-model="phonePrefix" placeholder="+86" style="width: 75px">
-                                    <el-option label="+86" value="+86" />
-                                    <el-option label="+852" value="+852" />
-                                    <el-option label="+853" value="+853" />
-                                    <el-option label="+886" value="+886" />
+                    <el-form-item prop="userEmail">
+                        <el-input v-model="emailLoginForm.userEmail" placeholder="请输入用户邮箱" :prefix-icon="Message">
+                            <template #append>
+                                <el-select v-model="suffix" style="width: 115px">
+                                    <el-option 
+                                        v-for="item in EMAIL_OPTIONS"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"    
+                                        @click="suffixChange(emailLoginForm.userEmail, suffix)"
+                                    />
                                 </el-select>
                             </template>
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="validCode">
-                        <el-input v-model="phoneLoginForm.validCode" placeholder="请输入验证码">
+                        <el-input v-model="emailLoginForm.validCode" placeholder="请输入验证码">
                             <template #append>
                                 <span @click="countdownChange">{{ countdown.validText }}</span>
                             </template>
@@ -116,35 +99,37 @@
                     <div><el-divider direction="vertical" /></div>
                     <el-link :underline="false">超级管理员</el-link>
                 </el-text>
-                <el-divider content-position="center" style="margin-top: 90px;">
-                    <div style="font-size: 12px; font-weight: 400; color: rgb(128, 131, 138);">
-                        其他登录方式
-                    </div>
-                </el-divider>
-                <div class="other-login">
-                    <ul class="flex-box">
-                        <li><el-link>login1</el-link></li>
-                        <li><el-link>login2</el-link></li>
-                        <li><el-link>login3</el-link></li>
-                        <li><el-link>login4</el-link></li>
-                        <li><el-link>login5</el-link></li>
-                        <li><el-link>login6</el-link></li>
-                    </ul>
-                </div>
             </div>
+            <el-divider content-position="center" style="margin-top: 90px;">
+                <div style="font-size: 12px; font-weight: 400; color: rgb(128, 131, 138);">
+                    其他登录方式
+                </div>
+            </el-divider>
+            <div class="other-login">
+                <ul class="flex-box">
+                    <li><el-link :underline="false">login1</el-link></li>
+                    <li><el-link :underline="false">login2</el-link></li>
+                    <li><el-link :underline="false">login3</el-link></li>
+                    <li><el-link :underline="false">login4</el-link></li>
+                    <li><el-link :underline="false">login5</el-link></li>
+                    <li><el-link :underline="false">login6</el-link></li>
+                </ul>
+            </div>
+            <el-text class="backToRegister-link flex-box"  style="margin-top: 30px;">
+                没有账号？
+                <el-link type="primary" :underline="false" @click="changeForm">现在就注册</el-link>
+            </el-text>
         </el-card>
     </el-row>
 </template>
 
 <script setup>
 import { ref, reactive, computed, toRaw } from 'vue'
-import { UserFilled, Lock, Hide, View } from '@element-plus/icons-vue'
+import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-
-// const imgUrl = new URL('../../../public/291cbd1565c3b7928389850d8e2990b928762a4561a8a5bea.jpg', import.meta.url).href
 
 const store = useStore()
 
@@ -156,13 +141,14 @@ const idLogin = () => {
     formPage.value = 0
 }
 
-// 手机登录界面
-const phoneLogin = () => {
+// 邮箱登录界面
+const emailLogin = () => {
     formPage.value = 1
 }
 
 // 切换登录注册界面
 const changeForm = () => {
+    formPage.value = 0
     store.commit('changeMenu')
 }
 
@@ -174,31 +160,37 @@ const passwordModeChange = () => {
     passwordMode.value = !passwordMode.value
 }
 
-// 手机号区域显示
-const phonePrefix = ref('+86')
+// 邮箱后缀
+const suffix = ref('@qq.com')
+
+// 邮箱后缀格式
+const EMAIL_OPTIONS = [
+    { value: '@qq.com', label: '@qq.com' },
+    { value: '@163.com', label: '@163.com' }
+]
+
+// 确认邮箱格式（一并添加到email中）
+const suffixChange = (email, suffix) => {
+    email = email + suffix
+}
 
 // 账号登录表单数据
 const idLoginForm = reactive({
-    userId: '',
+    userName: '',
     passWord: ''
 })
 
 // 手机号登录表单数据
-const phoneLoginForm = reactive({
-    userPhone: '',
+const emailLoginForm = reactive({
+    userEmail: '',
     validCode: ''
 })
 
 // 账号校验
-const validateId = (rule, value, callback) => {
-    // 账号不为空
+const validateName = (rule, value, callback) => {
+    // 用户名不为空
     if (value === '') {
-        callback(new Error('账号名/账号ID/电子邮箱必填'))
-    }
-    // 账号信息异常 
-    else {
-        const phoneReg = /^[a-zA-Z0-9@#$%^&+=]{6,12}$/
-        phoneReg.test(value) ? callback() : callback(new Error('输入格式错误'))
+        callback(new Error('用户名必填'))
     }
 }
 
@@ -215,16 +207,11 @@ const validatePass = (rule, value, callback) => {
     }
 }
 
-// 手机号校验
-const validatePhone = (rule, value, callback) => {
-    // 手机号不为空
+// 邮箱校验
+const validateEmail = (rule, value, callback) => {
+    // 邮箱不为空
     if (value === '') {
-        callback(new Error('请输入手机号'))
-    }
-    // 手机号信息异常 
-    else {
-        const phoneReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
-        phoneReg.test(value) ? callback() : callback(new Error('手机号格式不对，请输入正确手机号'))
+        callback(new Error('请输入邮箱'))
     }
 }
 
@@ -238,13 +225,13 @@ const validataCode = (rule, value, callback) => {
 
 // 账号表单校验
 const idRules = reactive({
-    userId: [{ validator: validateId, trigger: 'blur' }],
+    userName: [{ validator: validateName, trigger: 'blur' }],
     passWord: [{ validator: validatePass, trigger: 'blur' }]
 })
 
-// 手机号表单校验
-const phoneRules = reactive({
-    userPhone: [{ validator: validatePhone, trigger: 'blur' }],
+// 邮箱表单校验
+const emailRules = reactive({
+    userEmail: [{ validator: validateEmail, trigger: 'blur' }],
     validCode: [{ validator: validataCode, trigger: 'blur' }]
 })
 
@@ -294,7 +281,6 @@ const countdownChange = () => {
 
 const router = useRouter()
 const loginFormRef = ref()
-console.log('loginform', loginFormRef)
 
 // const routerList = computed(() => store.state.menu.routerList)
 // 表单提交 
@@ -407,7 +393,7 @@ const submitForm = async(formEl) => {
                     margin-bottom: 15px;
                 }
 
-                .phone-login {
+                .email-login {
                     margin-left: 15px;
                     margin-bottom: 15px;
                 }

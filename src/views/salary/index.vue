@@ -1,6 +1,6 @@
 <template>
     <div class="salary-table">
-        <el-button type="primary" round size="small">
+        <el-button type="primary" round size="small" @click="open(null)">
             <el-icon><CirclePlus/></el-icon>
             新增
         </el-button>
@@ -51,11 +51,106 @@
                 @current-change="handleCurrentChange"
             />
         </div>
+        <el-dialog
+            v-model="dialogFormVisable"
+            :before-close="beforeClose"
+            title="工资信息添加"
+            width="400"
+        >
+            <el-form
+                ref="formRef"
+                label-width="100px"
+                label-position="left"
+                :model="form"
+                :rules="rules"
+            >
+                <el-form-item prop="month" label="月份">
+                    <el-date-picker
+                        v-model="form.month"
+                        type="month"
+                        placeholder="选择月份"
+                        value-format="YYYY-MM"
+                        size="default"
+                    />
+                </el-form-item>
+                <el-form-item prop="department" label="部门">
+                    <el-select
+                        v-model="form.department"
+                        placeholder="请选择部门"
+                        size="default"
+                        style="width: 240px"
+                    >
+                        <el-option
+                            v-for="item in DEPARTMENT_OPTIONS"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="stuff" label="员工信息">
+                    <el-input v-model="form.stuff"/>
+                </el-form-item>
+                <el-form-item prop="basicSalary" label="基本工资">
+                    <el-input 
+                        v-model.number="form.basicSalary"
+                        type="text"
+                        placeholder="请输入"
+                    />
+                </el-form-item>
+                <el-form-item prop="meritSalary" label="绩效工资">
+                    <el-input 
+                        v-model.number="form.meritSalary"
+                        type="text"
+                        placeholder="请输入"
+                    />
+                </el-form-item>
+                <el-form-item prop="insurance" label="五险一金">
+                    <el-input 
+                        v-model.number="form.insurance"
+                        type="text"
+                        placeholder="请输入"
+                    />
+                </el-form-item>
+                <el-form-item prop="extra" label="额外奖励">
+                    <el-input 
+                        v-model.number="form.extra"
+                        type="text"
+                        placeholder="请输入"
+                    />
+                </el-form-item>
+                <el-form-item prop="deduct" label="其他扣除">
+                    <el-input 
+                        v-model.number="form.deduct"
+                        type="text"
+                        placeholder="请输入"
+                    />
+                </el-form-item>
+                <el-form-item label="工资合计">
+                    <el-input 
+                        :value="calculateTotal"
+                        disabled
+                    />
+                </el-form-item>
+                <el-form-item prop="notes" label="备注">
+                    <el-input v-model="form.notes"/>
+                </el-form-item>
+                <el-form-item prop="submitDate" label="提交日期">
+                    <el-input v-model="form.submitDate" disabled/>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="info" @click="dialogFormVisable=false">取消</el-button>
+                    <el-button type="primary" @click="confirm(formRef)">确认</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { ref, reactive, nextTick, computed } from 'vue'
 
 // 分页
 const paginationData = reactive({
@@ -63,6 +158,7 @@ const paginationData = reactive({
     pageSize: 10
 })
 
+// 测试数据
 const tableData = ({
     list: [
         {
@@ -96,6 +192,167 @@ const tableData = ({
     ],
     total: 10
 })
+
+const open = (rowData = {}) => {
+    dialogFormVisable.value = true
+    nextTick(() => {
+        if (rowData) {
+            // Object.assign(form, { month: rowData.month, notes: rowData.notes, enter: rowData.enter})
+        }
+    })
+} 
+
+const DEPARTMENT_OPTIONS = [
+    { value: 1, label: '研发部' },
+    { value: 2, label: '销售部' }
+]
+
+const edit = (rowData) => {
+    dialogFormVisable.value = true
+    open(rowData)
+}
+
+const cancel = (rowData) => {
+
+}
+
+const dialogFormVisable = ref(false)
+
+const beforeClose = () => {
+    dialogFormVisable.value = false
+    formRef.value.resetFields()
+}
+
+const rules = reactive({
+    month: [{ required: true, message: '请选择月份' }],
+    department: [{ required: true, message: '请选择部门' }],
+    stuff: [{ required: true, trigger: 'blur', message: '请填写姓名' }],
+    basicSalary: [
+        { required: true, message: '必填项' },
+        { 
+            validator: (_, value, callback) => {
+                if (value === null || value === '') return callback()
+                if (!Number.isInteger(Number(value))) {
+                    callback(new Error('必须为整数'))
+                } else {
+                    callback()
+                }
+            }
+        }
+    ],
+    meritSalary: [
+        { required: true, message: '必填项' },
+        { 
+            validator: (_, value, callback) => {
+                if (value === null || value === '') return callback()
+                if (!Number.isInteger(Number(value))) {
+                    callback(new Error('必须为整数'))
+                } else {
+                    callback()
+                }
+            }
+        }
+    ],
+    insurance: [
+        { required: true, message: '必填项' },
+        { 
+            validator: (_, value, callback) => {
+                if (value === null || value === '') return callback()
+                if (!Number.isInteger(Number(value))) {
+                    callback(new Error('必须为整数'))
+                } else {
+                    callback()
+                }
+            }
+        }
+    ],
+    extra: [
+        { required: true, message: '必填项' },
+        { 
+            validator: (_, value, callback) => {
+                if (value === null || value === '') return callback()
+                if (!Number.isInteger(Number(value))) {
+                    callback(new Error('必须为整数'))
+                } else {
+                    callback()
+                }
+            }
+        }
+    ],
+    deduct: [
+        { required: true, message: '必填项' },
+        { 
+            validator: (_, value, callback) => {
+                if (value === null || value === '') return callback()
+                if (!Number.isInteger(Number(value))) {
+                    callback(new Error('必须为整数'))
+                } else {
+                    callback()
+                }
+            }
+        }
+    ],
+    total: [
+        { required: true, message: '必填项' },
+        { 
+            validator: (_, value, callback) => {
+                if (value === null || value === '') return callback()
+                if (!Number.isInteger(Number(value))) {
+                    callback(new Error('必须为整数'))
+                } else {
+                    callback()
+                }
+            }
+        }
+    ],
+})
+
+
+const formRef = ref()
+
+const form = reactive({
+    month: null,
+    department: null,
+    stuff: '',
+    basicSalary: null,
+    meritSalary: null,
+    insurance: null,
+    extra: null,
+    deduct: null,
+    notes: '',
+    submitDate: new Date().toISOString().split('T')[0] // 自动填充提交日期
+})
+
+const calculateTotal = computed(() => {
+    return (
+        (form.basicSalary || 0) +
+        (form.meritSalary || 0) +
+        (form.extra || 0) -
+        (form.insurance || 0) -
+        (form.deduct || 0)
+    )
+})
+
+const confirm = async (formEl) => {
+    if (!formEl) return
+    // await formEl.validate((valid, fields) => {
+    //     if (valid) {
+    //         companion(form).then(({ data }) => {
+    //             if (data.code === 10000) {
+    //                 ElMessage.success('成功')
+    //                 beforeClose()
+    //                 getListData()
+    //             }
+    //             else {
+    //                 ElMessage.error(data.message)
+    //             }
+    //         })
+    //     }
+    //     else {
+    //         console.log('Error submit', fields)
+    //     }
+    // })
+}
 
 const handleSizeChange = () => {
 

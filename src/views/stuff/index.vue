@@ -71,20 +71,21 @@
                 :rules="rules"
             >
                 <el-form-item prop="department" label="部门">
-                    <el-dropdown trigger="click">
-                        <span class="el-dropdown-link">
-                        请选择所属部门<el-icon class="el-icon--right"><arrow-down /></el-icon>
-                        </span>
-                        <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item>研发部</el-dropdown-item>
-                            <el-dropdown-item>销售部</el-dropdown-item>
-                        </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                        <el-select
+                            v-model="form.department"
+                            placeholder="请选择部门"
+                            size="default"
+                        >
+                            <el-option
+                                v-for="item in DEPARTMENT_OPTIONS"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
                 </el-form-item>
                 <el-form-item prop="account" label="账号">
-                    <el-input v-model="form.account" disabled />
+                    <el-input v-model="form.account" />
                 </el-form-item>
                 <el-form-item prop="name" label="姓名">
                     <el-input v-model="form.name" placeholder="请输入员工姓名" />

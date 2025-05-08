@@ -8,101 +8,54 @@
             <div class="jump-link flex-box">
                 <p>
                     <el-link 
-                        :type="formPage === 0 ? 'primary' : 'default'" 
-                        class="phone-register" 
+                        type="primary" 
+                        class="register" 
                         :underline="false"
-                        @click="phoneRegister" style="font-size: 16px;"
+                        style="font-size: 16px;"
                     >
-                        手机号注册
-                    </el-link>
-                </p>
-                <p>
-                    <el-link 
-                        :type="formPage === 1 ? 'primary' : 'default'" 
-                        class="id-register" 
-                        :underline="false"
-                        @click="idRegister" style="font-size: 16px;">
-                        账号注册
+                        账号邮箱注册
                     </el-link>
                 </p>
             </div>
 
-            <!-- 手机注册 -->
+            <!-- 邮箱注册 -->
             <el-form 
                 ref="registerFormRef" 
-                :model="phoneRegisterForm" 
+                :model="RegisterForm" 
                 style="max-width: 480px" 
-                class="phone-ruleForm" 
-                :rules="phoneRules"
-                v-if="formPage === 0"
+                class="ruleForm" 
+                :rules="rules"
             >
-                <el-form-item prop="userPhone">
-                    <el-input v-model="phoneRegisterForm.userPhone" placeholder="请输入手机号">
-                        <template #prepend>
-                            <el-select v-model="phonePrefix" placeholder="+86" style="width: 77px">
-                                <el-option label="+86" value="+86" />
-                                <el-option label="+852" value="+852" />
-                                <el-option label="+853" value="+853" />
-                                <el-option label="+886" value="+886" />
-                            </el-select>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="validCode" style="margin-bottom: 10px;">
-                    <el-input v-model="phoneRegisterForm.validCode" placeholder="请输入验证码">
-                        <template #append>
-                            <span @click="countdownChange">{{ countdown.validText }}</span>
-                        </template>
-                    </el-input>
-                </el-form-item>
-                <el-checkbox v-model="checkboxButton" size="small">点击开始体验财务管理系统</el-checkbox>
-                <el-form-item>
-                    <el-button type="primary" class="register-button" @click="submitForm(loginFormRef)">
-                        开始体验
-                    </el-button>
-                </el-form-item>
-                <el-text class="backToLogin-link flex-box" style="margin-top: 188px;">
-                    已有账号？
-                    <el-link type="primary" :underline="false" @click="changeForm">立即登录</el-link>
-                </el-text>
-            </el-form>
-
-            <!-- 账号注册 -->
-            <el-form 
-                ref="RegisterFormRef" 
-                :model="idRegisterForm" 
-                style="max-width: 480px" 
-                class="phone-ruleForm" 
-                :rules="idRules"
-                v-else="formPage"
-            >
-                <el-form-item prop="userId">
-                    <el-input v-model="idRegisterForm.userId" placeholder="请设置用户名，5-20个字符" :prefix-icon="UserFilled">
+                <el-form-item prop="userName">
+                    <el-input v-model="RegisterForm.userName" placeholder="请设置用户名，5-10个字符" :prefix-icon="UserFilled">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="passWord">
-                    <el-input v-model="idRegisterForm.passWord" :type="passwordMode === false ? 'password' : 'text'"
-                        placeholder="请设置 登录密码" :prefix-icon="Lock">
+                    <el-input v-model="RegisterForm.passWord" :type="passwordMode === false ? 'password' : 'text'"
+                        placeholder="请设置登录密码" :prefix-icon="Lock">
                         <template #append>
                             <el-button :icon="passwordMode === false ? Hide : View" @click="passwordModeChange">
                             </el-button>
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="userId">
-                    <el-input v-model="idRegisterForm.userPhone" placeholder="请输入手机号">
-                        <template #prepend>
-                            <el-select v-model="phonePrefix" placeholder="+86" style="width: 77px">
-                                <el-option label="+86" value="+86" />
-                                <el-option label="+852" value="+852" />
-                                <el-option label="+853" value="+853" />
-                                <el-option label="+886" value="+886" />
+                <el-form-item prop="userEmail">
+                    <el-input v-model="RegisterForm.userEmail" placeholder="请输入邮箱" :prefix-icon="Message">
+                        <template #append>
+                            <el-select v-model="suffix" style="width: 115px">
+                                <el-option 
+                                    v-for="item in EMAIL_OPTIONS"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"    
+                                    @click="suffixChange(RegisterForm.userEmail, suffix)"
+                                />
                             </el-select>
                         </template>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="validCode">
-                    <el-input v-model="idRegisterForm.validCode" placeholder="请输入6位验证码">
+                    <el-input v-model="RegisterForm.validCode" placeholder="请输入6位验证码">
                         <template #append>
                             <span @click="countdownChange">{{ countdown.validText }}</span>
                         </template>
@@ -114,58 +67,38 @@
                         开始体验
                     </el-button>
                 </el-form-item>
-                <el-text class="backToLogin-link flex-box"  style="margin-top: 80px;">
+                <el-text class="backToLogin-link flex-box"  style="margin-top: 82px;">
                     已有账号？
                     <el-link type="primary" :underline="false" @click="changeForm">立即登录</el-link>
                 </el-text>
             </el-form>
-            
         </el-card>
     </el-row>
 
 </template>
 
 <script setup>
-import { ref, reactive, computed, toRaw } from 'vue'
-import { UserFilled, Lock, Hide, View } from '@element-plus/icons-vue'
+import { ref, reactive } from 'vue'
+import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
 import { ElCheckboxButton, ElMessage } from 'element-plus'
 // import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
-// const imgUrl = new URL('../../../public/291cbd1565c3b7928389850d8e2990b928762a4561a8a5bea.jpg', import.meta.url).href
-
 const store = useStore()
 
-// 手机号区域显示
-const phonePrefix = ref('+86')
+// 切换注册界面 （勿删）
+const changeForm = () => {
+    store.commit('changeMenu')
+}
 
 // 表单数据
-const phoneRegisterForm = reactive({
-    userPhone: '',
-    validCode: ''
-})
-const idRegisterForm = reactive({
-    userId: '',
+const RegisterForm = reactive({
+    userName: '',
     passWord: '',
-    userPhone: '',
+    userEmail: '',
     validCode: ''
 })
-
-// 表单切换变量（0手机注册，1账号注册）
-const formPage = ref(0)
-
-// 手机注册界面
-const phoneRegister = () => {
-    formPage.value = 0
-    checkboxButton.value = false
-}
-
-// 账号注册界面
-const idRegister = () => {
-    formPage.value = 1
-    checkboxButton.value = false
-}
 
 // 密码可见度(false不可见，true可见)
 const passwordMode = ref(false)
@@ -175,24 +108,28 @@ const passwordModeChange = () => {
     passwordMode.value = !passwordMode.value
 }
 
+// 邮箱后缀
+const suffix = ref('@qq.com')
+
+// 邮箱后缀格式
+const EMAIL_OPTIONS = [
+    { value: '@qq.com', label: '@qq.com' },
+    { value: '@163.com', label: '@163.com' }
+]
+
+// 确认邮箱格式（一并添加到email中）
+const suffixChange = (email, suffix) => {
+    email = email + suffix
+}
+
 // 注册必点按钮
 const checkboxButton = ref(false)
 
-// 切换登录注册界面
-const changeForm = () => {
-    store.commit('changeMenu')
-}
-
 // 账号校验
-const validateId = (rule, value, callback) => {
+const validateName = (rule, value, callback) => {
     // 账号不为空
     if (value === '') {
-        callback(new Error('账号名/账号ID/电子邮箱必填'))
-    }
-    // 账号信息异常 
-    else {
-        const phoneReg = /^[a-zA-Z0-9@#$%^&+=]{6,12}$/
-        phoneReg.test(value) ? callback() : callback(new Error('输入格式错误'))
+        callback(new Error('用户名必填'))
     }
 }
 
@@ -209,17 +146,12 @@ const validatePass = (rule, value, callback) => {
     }
 }
 
-// 手机号校验
-const validatePhone = (rule, value, callback) => {
-    // 手机号不为空
+// 邮箱校验
+const validateEmail = (rule, value, callback) => {
+    // 邮箱不能为空
     if (value === '') {
-        callback(new Error('请输入手机号'))
+        callback(new Error('请输入邮箱'))
     } 
-    // 手机号信息异常 
-    else {
-        const phoneReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
-        phoneReg.test(value) ? callback() : callback(new Error('手机号格式不对，请输入正确手机号'))
-    }
 }
 
 // 验证码校验
@@ -230,16 +162,10 @@ const validateCode = (rule, value, callback) => {
     }
 }
 
-// 表单校验
-const phoneRules = reactive({
-    userPhone: [{ validator: validatePhone, trigger: 'blur' }],    
-    validCode: [{ validator: validateCode, trigger: 'blur' }]    
-})
-
-const idRules = reactive({
-    userId: [{ validator: validateId, trigger: 'blur'}],
+const rules = reactive({
+    userName: [{ validator: validateName, trigger: 'blur'}],
     passWord: [ { validator: validatePass, trigger: 'blur'}],
-    userPhone: [{ validator: validatePhone, trigger: 'blur' }],    
+    userEmail: [{ validator: validateEmail, trigger: 'blur' }],    
     validCode: [{ validator: validateCode, trigger: 'blur' }]    
 })
 
@@ -249,21 +175,15 @@ const countdown = reactive({
     time: 60
 })
 
-let flag = false
 // 验证码
+let flag = false
 const countdownChange = () => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
     // 正则表达式 用于校验账号
-    const phoneReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
+    const emailReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
     // 验证码校验账号信息
-    if(!idRegisterForm.userPhone || !phoneReg.test(idRegisterForm.userPhone)) {
-        return ElMessage({
-            message: '请检查手机号是否正确',
-            type: 'warning',
-        })
-    }
-    if(!phoneRegisterForm.userPhone || !phoneReg.test(phoneRegisterForm.userPhone)) {
+    if(!RegisterForm.userEmail) {
         return ElMessage({
             message: '请检查手机号是否正确',
             type: 'warning',
@@ -375,19 +295,13 @@ const countdownChange = () => {
 
         // 手机、账号注册页面跳转按钮
         .jump-link {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
 
             p {
                 text-align: left;
 
-                .phone-register {
-                    margin-right: 15px;
-                    margin-bottom: 15px;
-                }
-
-                .id-register {
-                    margin-left: 15px;
-                    margin-bottom: 15px;
+                .register {
+                    margin-left: 10px;
                 }
             }
         }
