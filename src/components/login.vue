@@ -20,9 +20,10 @@
                 </p>
             </div>
 
-            <!-- 账号登录 -->
+            <!-- 用户名登录 -->
             <div v-if="formPage === 0">
-                <el-form ref="loginFormRef" 
+                <el-form 
+                    ref="idFormRef" 
                     :model="idLoginForm" 
                     class="id-ruleForm" 
                     :rules="idRules"
@@ -42,7 +43,7 @@
                     </el-form-item>
                 </el-form>
 
-                <el-button type="primary" class="login-button" @click="submitForm(loginFormRef)">
+                <el-button type="primary" class="login-button" @click="submitForm(idFormRef)">
                     登录
                 </el-button>
 
@@ -62,7 +63,8 @@
 
             <!-- 邮箱登录 -->
             <div v-else="formPage">
-                <el-form ref="loginFormRef" 
+                <el-form 
+                    ref="emailFormRef" 
                     :model="emailLoginForm" 
                     style="max-width: 480px" 
                     class="email-ruleForm"
@@ -91,7 +93,7 @@
                         </el-input>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" class="login-button" @click="submitForm(loginFormRef)">
+                <el-button type="primary" class="login-button" @click="submitForm(emailFormRef)">
                     登录&nbsp;/&nbsp;注册
                 </el-button>
                 <el-text class="login-help flex-box">
@@ -135,20 +137,26 @@ const store = useStore()
 
 // 表单切换变量（0账号登录，1手机登录）
 const formPage = ref(0)
+const idFormRef = ref(null);
+const emailFormRef = ref(null);
 
 // 账号登录界面
 const idLogin = () => {
     formPage.value = 0
+    emailFormRef.value?.resetFields()
 }
 
 // 邮箱登录界面
 const emailLogin = () => {
     formPage.value = 1
+    idFormRef.value?.resetFields()
 }
 
 // 切换登录注册界面
 const changeForm = () => {
     formPage.value = 0
+    idFormRef.value?.resetFields()
+    emailFormRef.value?.resetFields()
     store.commit('changeMenu')
 }
 
@@ -246,15 +254,15 @@ let flag = false
 const countdownChange = () => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
-    // 正则表达式 用于校验账号
-    const phoneReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
+    // 校验邮箱
+
     // 验证码校验账号信息
-    if (!phoneLoginForm.userPhone || !phoneReg.test(phoneLoginForm.userPhone)) {
-        return ElMessage({
-            message: '请检查手机号是否正确',
-            type: 'warning',
-        })
-    }
+    // if (!phoneLoginForm.userPhone || !phoneReg.test(phoneLoginForm.userPhone)) {
+    //     return ElMessage({
+    //         message: '请检查手机号是否正确',
+    //         type: 'warning',
+    //     })
+    // }
 
     // 设置验证码倒计时时间
     const time = setInterval(() => {
@@ -325,32 +333,56 @@ const loginFormRef = ref()
 
 
 // 登录
-const submitForm = async(formEl) => {
-    if (!formEl) return
-    // 手动触发校验
-    await formEl.validate((valid, fields) => {
-        if (valid) {
-            if (formPage.value === 0) {
+// const submitForm = async(formEl) => {
+//     console.log('formEl', formEl)
+//     if (!formEl) return
+//     // 手动触发校验
+//     await formEl.validate((valid, fields) => {
+//         if (valid) {
+//             if (formPage.value === 0) {
 
-                ElMessage({
-                    message: '登录成功',
-                    type: 'success',
-                })
-                router.push('/')
-            } 
-            else if (formPage === 1) {
+//                 ElMessage({
+//                     message: '登录成功',
+//                     type: 'success',
+//                 })
+//                 router.push('/')
+//             } 
+//             else if (formPage.value === 1) {
                 
-                ElMessage({
-                    message: '登录成功',
-                    type: 'success',
-                })
-                router.push('/')
-            }
+//                 ElMessage({
+//                     message: '登录成功',
+//                     type: 'success',
+//                 })
+//                 router.push('/')
+//             }
             
-        } else {
-            console.log('error submit!', fields)
-        }
-    })
+//         } else {
+//             console.log('error submit!', fields)
+//         }
+//     })
+// }
+
+const submitForm = async (formEl) => {
+  console.log('formEl', formEl)
+  if (!formEl) return
+  try {
+    await formEl.validate()
+    if (formPage.value === 0) {
+      ElMessage({
+        message: '用户名登录成功',
+        type: 'success',
+      })
+      router.push('/')
+    } else {
+      ElMessage({
+        message: '邮箱登录成功',
+        type: 'success',
+      })
+      router.push('/')
+    }
+  } catch (error) {
+    console.log('验证失败', error)
+  }
 }
 
 </script>

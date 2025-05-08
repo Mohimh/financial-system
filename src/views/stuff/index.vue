@@ -85,7 +85,7 @@
                         </el-select>
                 </el-form-item>
                 <el-form-item prop="account" label="账号">
-                    <el-input v-model="form.account" />
+                    <el-input v-model="form.account" placeholder="请输入员工账号"/>
                 </el-form-item>
                 <el-form-item prop="name" label="姓名">
                     <el-input v-model="form.name" placeholder="请输入员工姓名" />
@@ -93,9 +93,10 @@
                 <el-form-item prop="gender" label="性别">
                     <el-switch
                         v-model="form.gender"
-                        class="ml-2"
                         inline-prompt
                         style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                        :active-value="0"
+                        :inactive-value="1"
                         active-text="男"
                         inactive-text="女"
                     />
@@ -107,10 +108,14 @@
                     <el-input v-model="form.email" placeholder="请输入邮箱" />
                 </el-form-item>
                 <el-form-item prop="entry" label="入职时间">
-                    <el-input v-model="form.entry" disabled />
+                    <el-date-picker
+                        v-model="form.entry"
+                        type="date"
+                        placeholder="选择入职时间"
+                    />
                 </el-form-item>
                 <el-form-item prop="address" label="地址">
-                    <el-input v-model="form.enter" placeholder="请填写地址"/>
+                    <el-input v-model="form.address" placeholder="请填写地址"/>
                 </el-form-item>
                 <el-form-item prop="enter" label="录入时间">
                     <el-input v-model="form.enter" disabled/>
@@ -154,7 +159,7 @@ const tableData = reactive({
             enter: '2024-11-16 21:13:04'
         },
         {
-            department: '研发部',
+            department: '人事部',
             account: '2024002',
             name: '张亮',
             gender: 0,
@@ -174,7 +179,9 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
-            Object.assign(form, { name: rowData.name, notes: rowData.notes, enter: rowData.enter})
+            Object.assign(form, JSON.parse(JSON.stringify(rowData)))
+        } else {
+            form.enter = new Date().toLocaleString();
         }
     })
 } 
@@ -205,7 +212,13 @@ const rules = reactive({
     address: [{ required: true, trigger: 'blur', message: '请填写地址'}]
 })
 
+const DEPARTMENT_OPTIONS = [
+  { label: '研发部', value: '研发部' },
+  { label: '人事部', value: '人事部' },
+]
+
 const form = reactive({
+    department: '',
     account: '',
     name: '',
     gender: '',

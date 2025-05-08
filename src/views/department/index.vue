@@ -104,7 +104,6 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
-            // Object.assign(form, { name: rowData.name, notes: rowData.notes, enter: rowData.enter})
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
         } else {
             form.enter = new Date().toLocaleString();

@@ -24,18 +24,20 @@
             <el-table-column prop="notes" label="备注"/>
             <el-table-column prop="submitDate" label="提交日期"/>
             <el-table-column label="操作" width="200px">
-                <el-link :underline="false" type="primary">
-                    <el-icon><EditPen /></el-icon>
-                    编辑
-                </el-link>
-                <el-link :underline="false" type="warning">
-                    <el-icon><CircleCheck /></el-icon>
-                    发放
-                </el-link>
-                <el-link :underline="false" type="danger">
-                    <el-icon><Delete /></el-icon>
-                    删除
-                </el-link>
+                <template #default="scoped">
+                    <el-link :underline="false" type="primary" @click="edit(scoped.row)">
+                        <el-icon><EditPen /></el-icon>
+                        编辑
+                    </el-link>
+                    <el-link :underline="false" type="warning">
+                        <el-icon><CircleCheck /></el-icon>
+                        发放
+                    </el-link>
+                    <el-link :underline="false" type="danger">
+                        <el-icon><Delete /></el-icon>
+                        删除
+                    </el-link>
+                </template>
             </el-table-column>
         </el-table>
         <div class="pagination-info">
@@ -197,14 +199,17 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
-            // Object.assign(form, { month: rowData.month, notes: rowData.notes, enter: rowData.enter})
-        }
+            console.log('ok')
+            Object.assign(form, JSON.parse(JSON.stringify(rowData)))
+        } else {
+            form.enter = new Date().toLocaleString();
+        }   
     })
 } 
 
 const DEPARTMENT_OPTIONS = [
-    { value: 1, label: '研发部' },
-    { value: 2, label: '销售部' }
+    { value: '研发部', label: '研发部' },
+    { value: '销售部', label: '销售部' }
 ]
 
 const edit = (rowData) => {

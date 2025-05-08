@@ -1,5 +1,5 @@
 <template>
-    <el-row class="login-box" justify="center" :align="'center'">
+    <el-row class="login-box" justify="center" :align="'middle'">
         <el-col :span="8" justify="center" :align="'middle'">
             <!-- <video autoplay muted loop src="../../../public/bochi the rock.mp4"></video> -->
         </el-col>
