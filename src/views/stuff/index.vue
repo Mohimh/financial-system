@@ -221,7 +221,7 @@ const form = reactive({
     department: '',
     account: '',
     name: '',
-    gender: '',
+    gender: null,
     tel: '',
     email: '',
     entry: '',

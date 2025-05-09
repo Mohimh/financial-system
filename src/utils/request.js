@@ -9,12 +9,12 @@ const http = axios.create({
 // 添加请求拦截器
 http.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
-  const token = localStorage.getItem('financial_token')
+  // const token = localStorage.getItem('financial_token')
   // 不需要添加token的api
-  const whiteUrl = ['/health']
-  if (token && !whiteUrl.includes(config.url)) {
-      config.headers['x-token'] = token
-  }
+  // const whiteUrl = ['/health', '/base/captcha']
+  // if (token && !whiteUrl.includes(config.url)) {
+  //     config.headers['x-token'] = token
+  // }
   return config;
 }, function (error) {
   // 对请求错误做些什么

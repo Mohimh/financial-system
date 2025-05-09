@@ -288,7 +288,6 @@ const countdownChange = () => {
 }
 
 const router = useRouter()
-const loginFormRef = ref()
 
 // const routerList = computed(() => store.state.menu.routerList)
 // 表单提交 
@@ -363,26 +362,26 @@ const loginFormRef = ref()
 // }
 
 const submitForm = async (formEl) => {
-  console.log('formEl', formEl)
-  if (!formEl) return
-  try {
-    await formEl.validate()
-    if (formPage.value === 0) {
-      ElMessage({
-        message: '用户名登录成功',
-        type: 'success',
-      })
-      router.push('/')
-    } else {
-      ElMessage({
-        message: '邮箱登录成功',
-        type: 'success',
-      })
-      router.push('/')
+    console.log('formEl', formEl)
+    if (!formEl) return
+    try {
+        await formEl.validate()
+        if (formPage.value === 0) {
+        ElMessage({
+            message: '用户名登录成功',
+            type: 'success',
+        })
+        router.push('/')
+        } else {
+        ElMessage({
+            message: '邮箱登录成功',
+            type: 'success',
+        })
+        router.push('/')
+        }
+    } catch (error) {
+        console.log('验证失败', error)
     }
-  } catch (error) {
-    console.log('验证失败', error)
-  }
 }
 
 </script>

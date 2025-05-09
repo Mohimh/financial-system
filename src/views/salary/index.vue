@@ -90,42 +90,42 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item prop="stuff" label="员工信息">
-                    <el-input v-model="form.stuff"/>
+                <el-form-item prop="stuff" label="员工名称">
+                    <el-input v-model="form.stuff" placeholder="请输入员工名称"/>
                 </el-form-item>
                 <el-form-item prop="basicSalary" label="基本工资">
                     <el-input 
                         v-model.number="form.basicSalary"
                         type="text"
-                        placeholder="请输入"
+                        placeholder="请输入基本工资"
                     />
                 </el-form-item>
                 <el-form-item prop="meritSalary" label="绩效工资">
                     <el-input 
                         v-model.number="form.meritSalary"
                         type="text"
-                        placeholder="请输入"
+                        placeholder="请输入绩效工资"
                     />
                 </el-form-item>
                 <el-form-item prop="insurance" label="五险一金">
                     <el-input 
                         v-model.number="form.insurance"
                         type="text"
-                        placeholder="请输入"
+                        placeholder="请输入五险一金"
                     />
                 </el-form-item>
                 <el-form-item prop="extra" label="额外奖励">
                     <el-input 
                         v-model.number="form.extra"
                         type="text"
-                        placeholder="请输入"
+                        placeholder="请输入额外奖励"
                     />
                 </el-form-item>
                 <el-form-item prop="deduct" label="其他扣除">
                     <el-input 
                         v-model.number="form.deduct"
                         type="text"
-                        placeholder="请输入"
+                        placeholder="请输入其他扣除"
                     />
                 </el-form-item>
                 <el-form-item label="工资合计">

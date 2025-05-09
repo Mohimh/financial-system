@@ -42,13 +42,12 @@
                 <el-form-item prop="userEmail">
                     <el-input v-model="RegisterForm.userEmail" placeholder="请输入邮箱" :prefix-icon="Message">
                         <template #append>
-                            <el-select v-model="suffix" style="width: 115px">
+                            <el-select v-model="suffix" style="width: 115px" @change="handleSuffixChange">
                                 <el-option 
                                     v-for="item in EMAIL_OPTIONS"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"    
-                                    @click="suffixChange(RegisterForm.userEmail, suffix)"
                                 />
                             </el-select>
                         </template>
@@ -57,7 +56,7 @@
                 <el-form-item prop="validCode">
                     <el-input v-model="RegisterForm.validCode" placeholder="请输入6位验证码">
                         <template #append>
-                            <span @click="countdownChange">{{ countdown.validText }}</span>
+                            <span @click="countdownChange(RegisterForm.userEmail)">{{ countdown.validText }}</span>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -81,6 +80,7 @@
 import { ref, reactive } from 'vue'
 import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
+import { getCode } from '@/api'
 import { ElCheckboxButton, ElMessage } from 'element-plus'
 // import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -109,7 +109,7 @@ const passwordModeChange = () => {
 }
 
 // 邮箱后缀
-const suffix = ref('@qq.com')
+const suffix = ref('请选择邮箱')
 
 // 邮箱后缀格式
 const EMAIL_OPTIONS = [
@@ -118,9 +118,10 @@ const EMAIL_OPTIONS = [
 ]
 
 // 确认邮箱格式（一并添加到email中）
-const suffixChange = (email, suffix) => {
-    email = email + suffix
-}
+const handleSuffixChange = (newSuffix) => {
+  const prefix = RegisterForm.userEmail.split('@')[0]; // 获取当前邮箱前缀
+  RegisterForm.userEmail = prefix + newSuffix; // 拼接完整邮箱
+};
 
 // 注册必点按钮
 const checkboxButton = ref(false)
@@ -177,18 +178,18 @@ const countdown = reactive({
 
 // 验证码
 let flag = false
-const countdownChange = () => {
+const countdownChange = (email) => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
     // 正则表达式 用于校验账号
-    const emailReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
+    // const emailReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
     // 验证码校验账号信息
-    if(!RegisterForm.userEmail) {
-        return ElMessage({
-            message: '请检查手机号是否正确',
-            type: 'warning',
-        })
-    }
+    // if(!RegisterForm.userEmail) {
+    //     return ElMessage({
+    //         message: '请检查手机号是否正确',
+    //         type: 'warning',
+    //     })
+    // }
 
     // 设置验证码倒计时时间
     const time = setInterval(() => {
@@ -206,11 +207,12 @@ const countdownChange = () => {
     flag = true
 
     // 发送验证码
-    // getCode({ tel: loginForm.userName }).then(({data})=>{
-    //     if (data.code === 10000) {
-    //         ElMessage.success('发送成功')
-    //     }
-    // })
+    getCode({ target: RegisterForm.userEmail, vType: 'email' }).then(({data})=>{
+        console.log(data, 'data')
+        // if (data.code === 10000) {
+        //     ElMessage.success('发送成功')
+        // }
+    })
 } 
 
 // const router = useRouter()
