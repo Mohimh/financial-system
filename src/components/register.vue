@@ -22,7 +22,7 @@
                 :rules="rules"
             >
                 <el-form-item prop="userName">
-                    <el-input v-model="registerForm.userName" placeholder="请设置用户名，5-10个字符" :prefix-icon="UserFilled">
+                    <el-input v-model="registerForm.userName" placeholder="请设置用户名，4-10个字符" :prefix-icon="UserFilled">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="passWord">
@@ -47,7 +47,7 @@
                 <el-form-item prop="captcha">
                     <el-input v-model="registerForm.captcha" placeholder="请输入6位验证码">
                         <template #append>
-                            <span @click="countdownChange(registerForm.email)">{{ countdown.validText }}</span>
+                            <span @click="countdownChange">{{ countdown.validText }}</span>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -88,7 +88,7 @@ const registerForm = reactive({
     userName: '',
     passWord: '',
     email: '',
-    captcha: ''
+    captcha: '',
 })
 
 // 密码可见度(false不可见，true可见)
@@ -123,6 +123,10 @@ const validateName = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('用户名必填'))
     }
+    else {
+        const reg = /^[A-Za-z0-9]{4,10}$/
+        reg.test(value) ? callback() : callback(new Error('请输入4-10位字符（不能有特殊字符）'))
+    }
 }
 
 // 密码校验
@@ -144,6 +148,9 @@ const validateEmail = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请输入邮箱'))
     }
+    else {
+        callback()
+    }
 }
 
 // 验证码校验
@@ -151,6 +158,10 @@ const validateCode = (rule, value, callback) => {
     // 验证码不为空
     if (value === '') {
         callback(new Error('请输入验证码'))
+    }
+    else {
+        const reg = /^[0-9]{6}$/
+        reg.test(value) ? callback() : callback(new Error('请检查验证码是否正确'))
     }
 }
 
@@ -169,11 +180,11 @@ const countdown = reactive({
 
 // 验证码
 let flag = false
-const countdownChange = (email) => {
+const countdownChange = () => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
     // 邮箱校验
-    if (email === 'value') {
+    if (registerForm.email === 'value') {
         return ElMessage({
             message: '请完整填写您的邮箱信息',
             type: 'warning',
@@ -214,12 +225,12 @@ const router = useRouter()
 const registerFormRef = ref()
 
 // const routerList = computed(() => store.state.menu.routerList)
+
 // 表单提交 
 const submitForm = async(formEl) => {
     console.log("通过1")
     if (!formEl) return
     console.log("通过2")
-    console.log(registerFormRef.value)
     // 手动触发校验
     await formEl.validate((valid, fields) => {
         console.log("通过3")
@@ -231,6 +242,7 @@ const submitForm = async(formEl) => {
                     // 将token和用户信息缓存到浏览器
                     localStorage.setItem('fs_token', data.data.token)
                     localStorage.setItem('fs_user', JSON.stringify(data.data.user))
+                    router.push('/')
                     // menuPermissions().then(({ data }) => {
                     //     store.commit('dynamicMenu', data.data)
                     //     console.log(routerList, 'routerList')
@@ -240,7 +252,6 @@ const submitForm = async(formEl) => {
                     //     router.push('/')
                     // })
                 }
-                router.push('/')
             })
         } else {
             console.log('error submit!', fields)
