@@ -29,7 +29,7 @@ http.interceptors.response.use(function (response) {
 
   // 对接口异常的数据，给用户提示
   if (response.data.code === -1) {
-      ElMessage.warning(response.data.message)
+      ElMessage.warning(response.data.msg)
   }
   if (response.data.code === -2) {
       localStorage.removeItem('financial_token')

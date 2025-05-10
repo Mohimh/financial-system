@@ -70,23 +70,30 @@
                     class="email-ruleForm"
                     :rules="emailRules"
                 >
-                    <el-form-item prop="userEmail">
-                        <el-input v-model="emailLoginForm.userEmail" placeholder="请输入用户邮箱" :prefix-icon="Message">
+                    <el-form-item prop="email">
+                        <el-input 
+                            v-model="emailLoginForm.email" 
+                            placeholder="请输入用户邮箱" 
+                            :prefix-icon="Message"
+                        >
                             <template #append>
-                                <el-select v-model="suffix" style="width: 115px">
+                                <el-select 
+                                    v-model="suffix" 
+                                    style="width: 115px"
+                                    @change="handleSuffixChange"
+                                >
                                     <el-option 
                                         v-for="item in EMAIL_OPTIONS"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value"    
-                                        @click="suffixChange(emailLoginForm.userEmail, suffix)"
                                     />
                                 </el-select>
                             </template>
                         </el-input>
                     </el-form-item>
-                    <el-form-item prop="validCode">
-                        <el-input v-model="emailLoginForm.validCode" placeholder="请输入验证码">
+                    <el-form-item prop="captcha">
+                        <el-input v-model="emailLoginForm.captcha" placeholder="请输入6位验证码">
                             <template #append>
                                 <span @click="countdownChange">{{ countdown.validText }}</span>
                             </template>
@@ -126,19 +133,18 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, toRaw } from 'vue'
+import { ref, reactive } from 'vue'
 import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
+import { getCode, login } from '@/api'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 const store = useStore()
 
-// 表单切换变量（0账号登录，1手机登录）
+// 表单切换变量（0用户名登录，1邮箱登录）
 const formPage = ref(0)
-const idFormRef = ref(null);
-const emailFormRef = ref(null);
 
 // 账号登录界面
 const idLogin = () => {
@@ -169,7 +175,7 @@ const passwordModeChange = () => {
 }
 
 // 邮箱后缀
-const suffix = ref('@qq.com')
+const suffix = ref('请选择邮箱')
 
 // 邮箱后缀格式
 const EMAIL_OPTIONS = [
@@ -178,9 +184,10 @@ const EMAIL_OPTIONS = [
 ]
 
 // 确认邮箱格式（一并添加到email中）
-const suffixChange = (email, suffix) => {
-    email = email + suffix
-}
+const handleSuffixChange = (newSuffix) => {
+    const prefix = registerForm.email.split('@')[0]; // 获取当前邮箱前缀
+    registerForm.email = prefix + newSuffix; // 拼接完整邮箱
+};
 
 // 账号登录表单数据
 const idLoginForm = reactive({
@@ -190,8 +197,8 @@ const idLoginForm = reactive({
 
 // 手机号登录表单数据
 const emailLoginForm = reactive({
-    userEmail: '',
-    validCode: ''
+    email: '',
+    captcha: ''
 })
 
 // 账号校验
@@ -199,6 +206,10 @@ const validateName = (rule, value, callback) => {
     // 用户名不为空
     if (value === '') {
         callback(new Error('用户名必填'))
+    }
+    else {
+        const reg = /^[A-Za-z0-9]{4,10}$/
+        reg.test(value) ? callback() : callback(new Error('请输入4-10位字符（不能有特殊字符）'))
     }
 }
 
@@ -221,6 +232,9 @@ const validateEmail = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请输入邮箱'))
     }
+    else {
+        callback()
+    }
 }
 
 // 验证码校验
@@ -228,6 +242,10 @@ const validataCode = (rule, value, callback) => {
     // 验证码不为空
     if (value === '') {
         callback(new Error('请输入验证码'))
+    }
+    else {
+        const reg = /^[0-9]{6}$/
+        reg.test(value) ? callback() : callback(new Error('请检查验证码是否正确'))
     }
 }
 
@@ -239,8 +257,8 @@ const idRules = reactive({
 
 // 邮箱表单校验
 const emailRules = reactive({
-    userEmail: [{ validator: validateEmail, trigger: 'blur' }],
-    validCode: [{ validator: validataCode, trigger: 'blur' }]
+    email: [{ validator: validateEmail, trigger: 'blur' }],
+    captcha: [{ validator: validataCode, trigger: 'blur' }]
 })
 
 // 倒计时按钮
@@ -255,14 +273,18 @@ const countdownChange = () => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
     // 校验邮箱
-
-    // 验证码校验账号信息
-    // if (!phoneLoginForm.userPhone || !phoneReg.test(phoneLoginForm.userPhone)) {
-    //     return ElMessage({
-    //         message: '请检查手机号是否正确',
-    //         type: 'warning',
-    //     })
-    // }
+    if (emailLoginForm.email === 'value') {
+        return ElMessage({
+            message: '请完整填写您的邮箱信息',
+            type: 'warning',
+        })
+    }
+    else if (suffix.value === '请选择邮箱') {
+        return ElMessage({
+            message: '请选择邮箱类型',
+            type: 'warning',
+        })
+    }
 
     // 设置验证码倒计时时间
     const time = setInterval(() => {
@@ -280,108 +302,61 @@ const countdownChange = () => {
     flag = true
 
     // 发送验证码
-    // getCode({ tel: loginForm.userName }).then(({data})=>{
-    //     if (data.code === 10000) {
-    //         ElMessage.success('发送成功')
-    //     }
-    // })
+    getCode({ target: registerForm.email, vType: 'email' }).then(({ data }) => {
+        console.log(data, 'data')
+        if (data.code === 0) {
+            ElMessage.success('发送成功')
+        }
+    })
 }
 
 const router = useRouter()
+const idFormRef = ref();
+const emailFormRef = ref();
 
 // const routerList = computed(() => store.state.menu.routerList)
 // 表单提交 
-// const submitForm = async(formEl) => {
-//     if (!formEl) return
-//     // 手动触发校验
-//     await formEl.validate((valid, fields) => {
-//         if (valid) {
-//             // 注册页面
-//             if (formType.value) {
-//                 userAuthentication(loginForm).then(({ data }) => {
-//                     if(data.code === 10000) {
-//                         ElMessage.success('注册成功，请登录')
-//                         formType.value = 0
-//                     }
-//                 })
-//             } else {
-//             // 登录页面
-//                 login(loginForm).then(({ data }) => {
-//                     if(data.code === 10000) {
-//                         ElMessage.success('登录成功！')
-//                         console.log(data)
-//                         // 将token和用户信息缓存到浏览器
-//                         localStorage.setItem('pz_token', data.data.token)
-//                         localStorage.setItem('pz_userInfo', JSON.stringify(data.data.userInfo))
-//                         menuPermissions().then(({ data }) => {
-//                             store.commit('dynamicMenu', data.data)
-//                             console.log(routerList, 'routerList')
-//                             toRaw(routerList.value).forEach(item => {
-//                                 router.addRoute('main', item)  
-//                             })
-//                             router.push('/')
-//                         })
-//                     }
-//                 })
-//             }
-//         } else {
-//             console.log('error submit!', fields)
-//         }
-//     })
-// }
-
-
-// 登录
-// const submitForm = async(formEl) => {
-//     console.log('formEl', formEl)
-//     if (!formEl) return
-//     // 手动触发校验
-//     await formEl.validate((valid, fields) => {
-//         if (valid) {
-//             if (formPage.value === 0) {
-
-//                 ElMessage({
-//                     message: '登录成功',
-//                     type: 'success',
-//                 })
-//                 router.push('/')
-//             } 
-//             else if (formPage.value === 1) {
-                
-//                 ElMessage({
-//                     message: '登录成功',
-//                     type: 'success',
-//                 })
-//                 router.push('/')
-//             }
-            
-//         } else {
-//             console.log('error submit!', fields)
-//         }
-//     })
-// }
-
-const submitForm = async (formEl) => {
-    console.log('formEl', formEl)
+const submitForm = async(formEl) => {
     if (!formEl) return
-    try {
-        await formEl.validate()
-        if (formPage.value === 0) {
-        ElMessage({
-            message: '用户名登录成功',
-            type: 'success',
-        })
-        router.push('/')
+    // 手动触发校验
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            // 用户名登录
+            if (formPage.value === 0) {
+                login(idLoginForm).then(({ data }) => {
+                    if(data.code === 0) {
+                        ElMessage.success('登录成功')
+                        console.log('data', data)
+                        // 将token和用户信息缓存到浏览器
+                        localStorage.setItem('fs_token', data.data.token)
+                        localStorage.setItem('fs_user', JSON.stringify(data.data.user))
+                        router.push('/')
+                    }
+                })
+            } else {
+            // 邮箱登录
+                login(emailLoginForm).then(({ data }) => {
+                    if(data.code === 0) {
+                        ElMessage.success('登录成功！')
+                        console.log(data)
+                        // 将token和用户信息缓存到浏览器
+                        localStorage.setItem('fs_token', data.data.token)
+                        localStorage.setItem('fs_user', JSON.stringify(data.data.user))
+                        // menuPermissions().then(({ data }) => {
+                        //     store.commit('dynamicMenu', data.data)
+                        //     console.log(routerList, 'routerList')
+                        //     toRaw(routerList.value).forEach(item => {
+                        //         router.addRoute('main', item)  
+                        //     })
+                        //     router.push('/')
+                        // })
+                    }
+                })
+            }
         } else {
-        ElMessage({
-            message: '邮箱登录成功',
-            type: 'success',
-        })
-        router.push('/')
+            console.log('error submit!', fields)
         }
-    } catch (error) {
-        console.log('验证失败', error)
-    }
+    })
 }
 
 </script>

@@ -22,24 +22,42 @@
                 :rules="rules"
             >
                 <el-form-item prop="userName">
-                    <el-input v-model="registerForm.userName" placeholder="请设置用户名，4-10个字符" :prefix-icon="UserFilled">
-                    </el-input>
+                    <el-input 
+                        v-model="registerForm.userName" 
+                        placeholder="请设置用户名，4-10个字符" 
+                        :prefix-icon="UserFilled"
+                    />
                 </el-form-item>
                 <el-form-item prop="passWord">
-                    <el-input v-model="registerForm.passWord" :type="passwordMode === false ? 'password' : 'text'"
-                        placeholder="请设置登录密码" :prefix-icon="Lock">
+                    <el-input 
+                        v-model="registerForm.passWord" 
+                        :type="passwordMode === false ? 'password' : 'text'"
+                        placeholder="请设置登录密码" 
+                        :prefix-icon="Lock"
+                    >
                         <template #append>
-                            <el-button :icon="passwordMode === false ? Hide : View" @click="passwordModeChange">
-                            </el-button>
+                            <el-button :icon="passwordMode === false ? Hide : View" @click="passwordModeChange" />
                         </template>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="email">
-                    <el-input v-model="registerForm.email" placeholder="请输入邮箱" :prefix-icon="Message">
+                    <el-input 
+                        v-model="registerForm.email" 
+                        placeholder="请输入邮箱" 
+                        :prefix-icon="Message"
+                    >
                         <template #append>
-                            <el-select v-model="suffix" style="width: 115px" @change="handleSuffixChange">
-                                <el-option v-for="item in EMAIL_OPTIONS" :key="item.value" :label="item.label"
-                                    :value="item.value" />
+                            <el-select 
+                                v-model="suffix" 
+                                style="width: 115px" 
+                                @change="handleSuffixChange"
+                            >
+                                <el-option 
+                                    v-for="item in EMAIL_OPTIONS" 
+                                    :key="item.value" 
+                                    :label="item.label"
+                                    :value="item.value" 
+                                />
                             </el-select>
                         </template>
                     </el-input>
@@ -228,12 +246,9 @@ const registerFormRef = ref()
 
 // 表单提交 
 const submitForm = async(formEl) => {
-    console.log("通过1")
     if (!formEl) return
-    console.log("通过2")
     // 手动触发校验
     await formEl.validate((valid, fields) => {
-        console.log("通过3")
         if (valid) {
             register(registerForm).then(({ data }) => {
                 if(data.code === 0) {
