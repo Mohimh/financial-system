@@ -52,7 +52,6 @@
 import { Fold } from '@element-plus/icons-vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
-import { health } from '@/api';
 import { computed, ref, watch } from 'vue';
 
 
@@ -73,9 +72,6 @@ watch(() => route.path, (newPath) => {
 const homeClick = () => {
     activePath.value = '/home'
     router.push('/home')
-    // health().then(({}) => {
-    //     console.log('接口测试成功')
-    // })
 }
 
 const pageClick = (path) => {

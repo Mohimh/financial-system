@@ -7,12 +7,7 @@
             <!-- 切换手机注册，账号注册按钮 -->
             <div class="jump-link flex-box">
                 <p>
-                    <el-link 
-                        type="primary" 
-                        class="register" 
-                        :underline="false"
-                        style="font-size: 16px;"
-                    >
+                    <el-link type="primary" class="register" :underline="false" style="font-size: 16px;">
                         账号邮箱注册
                     </el-link>
                 </p>
@@ -21,17 +16,17 @@
             <!-- 邮箱注册 -->
             <el-form 
                 ref="registerFormRef" 
-                :model="RegisterForm" 
+                :model="registerForm" 
                 style="max-width: 480px" 
-                class="ruleForm" 
+                class="ruleForm"
                 :rules="rules"
             >
                 <el-form-item prop="userName">
-                    <el-input v-model="RegisterForm.userName" placeholder="请设置用户名，5-10个字符" :prefix-icon="UserFilled">
+                    <el-input v-model="registerForm.userName" placeholder="请设置用户名，5-10个字符" :prefix-icon="UserFilled">
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="passWord">
-                    <el-input v-model="RegisterForm.passWord" :type="passwordMode === false ? 'password' : 'text'"
+                    <el-input v-model="registerForm.passWord" :type="passwordMode === false ? 'password' : 'text'"
                         placeholder="请设置登录密码" :prefix-icon="Lock">
                         <template #append>
                             <el-button :icon="passwordMode === false ? Hide : View" @click="passwordModeChange">
@@ -39,24 +34,20 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="userEmail">
-                    <el-input v-model="RegisterForm.userEmail" placeholder="请输入邮箱" :prefix-icon="Message">
+                <el-form-item prop="email">
+                    <el-input v-model="registerForm.email" placeholder="请输入邮箱" :prefix-icon="Message">
                         <template #append>
                             <el-select v-model="suffix" style="width: 115px" @change="handleSuffixChange">
-                                <el-option 
-                                    v-for="item in EMAIL_OPTIONS"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"    
-                                />
+                                <el-option v-for="item in EMAIL_OPTIONS" :key="item.value" :label="item.label"
+                                    :value="item.value" />
                             </el-select>
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="validCode">
-                    <el-input v-model="RegisterForm.validCode" placeholder="请输入6位验证码">
+                <el-form-item prop="captcha">
+                    <el-input v-model="registerForm.captcha" placeholder="请输入6位验证码">
                         <template #append>
-                            <span @click="countdownChange(RegisterForm.userEmail)">{{ countdown.validText }}</span>
+                            <span @click="countdownChange(registerForm.email)">{{ countdown.validText }}</span>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -66,7 +57,7 @@
                         开始体验
                     </el-button>
                 </el-form-item>
-                <el-text class="backToLogin-link flex-box"  style="margin-top: 82px;">
+                <el-text class="backToLogin-link flex-box" style="margin-top: 82px;">
                     已有账号？
                     <el-link type="primary" :underline="false" @click="changeForm">立即登录</el-link>
                 </el-text>
@@ -80,9 +71,9 @@
 import { ref, reactive } from 'vue'
 import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
-import { getCode } from '@/api'
+import { getCode, register } from '@/api'
 import { ElCheckboxButton, ElMessage } from 'element-plus'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -93,11 +84,11 @@ const changeForm = () => {
 }
 
 // 表单数据
-const RegisterForm = reactive({
+const registerForm = reactive({
     userName: '',
     passWord: '',
-    userEmail: '',
-    validCode: ''
+    email: '',
+    captcha: ''
 })
 
 // 密码可见度(false不可见，true可见)
@@ -119,8 +110,8 @@ const EMAIL_OPTIONS = [
 
 // 确认邮箱格式（一并添加到email中）
 const handleSuffixChange = (newSuffix) => {
-  const prefix = RegisterForm.userEmail.split('@')[0]; // 获取当前邮箱前缀
-  RegisterForm.userEmail = prefix + newSuffix; // 拼接完整邮箱
+    const prefix = registerForm.email.split('@')[0]; // 获取当前邮箱前缀
+    registerForm.email = prefix + newSuffix; // 拼接完整邮箱
 };
 
 // 注册必点按钮
@@ -152,7 +143,7 @@ const validateEmail = (rule, value, callback) => {
     // 邮箱不能为空
     if (value === '') {
         callback(new Error('请输入邮箱'))
-    } 
+    }
 }
 
 // 验证码校验
@@ -164,10 +155,10 @@ const validateCode = (rule, value, callback) => {
 }
 
 const rules = reactive({
-    userName: [{ validator: validateName, trigger: 'blur'}],
-    passWord: [ { validator: validatePass, trigger: 'blur'}],
-    userEmail: [{ validator: validateEmail, trigger: 'blur' }],    
-    validCode: [{ validator: validateCode, trigger: 'blur' }]    
+    userName: [{ validator: validateName, trigger: 'blur' }],
+    passWord: [{ validator: validatePass, trigger: 'blur' }],
+    email: [{ validator: validateEmail, trigger: 'blur' }],
+    captcha: [{ validator: validateCode, trigger: 'blur' }]
 })
 
 // 倒计时按钮
@@ -181,15 +172,19 @@ let flag = false
 const countdownChange = (email) => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
-    // 正则表达式 用于校验账号
-    // const emailReg = /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
-    // 验证码校验账号信息
-    // if(!RegisterForm.userEmail) {
-    //     return ElMessage({
-    //         message: '请检查手机号是否正确',
-    //         type: 'warning',
-    //     })
-    // }
+    // 邮箱校验
+    if (email === 'value') {
+        return ElMessage({
+            message: '请完整填写您的邮箱信息',
+            type: 'warning',
+        })
+    }
+    else if (suffix.value === '请选择邮箱') {
+        return ElMessage({
+            message: '请选择邮箱类型',
+            type: 'warning',
+        })
+    }
 
     // 设置验证码倒计时时间
     const time = setInterval(() => {
@@ -207,58 +202,51 @@ const countdownChange = (email) => {
     flag = true
 
     // 发送验证码
-    getCode({ target: RegisterForm.userEmail, vType: 'email' }).then(({data})=>{
+    getCode({ target: registerForm.email, vType: 'email' }).then(({ data }) => {
         console.log(data, 'data')
-        // if (data.code === 10000) {
-        //     ElMessage.success('发送成功')
-        // }
+        if (data.code === 0) {
+            ElMessage.success('发送成功')
+        }
     })
-} 
+}
 
-// const router = useRouter()
-// const registerForm = ref()
-// const store = useStore()
+const router = useRouter()
+const registerFormRef = ref()
 
 // const routerList = computed(() => store.state.menu.routerList)
 // 表单提交 
-// const submitForm = async(formEl) => {
-//     if (!formEl) return
-//     // 手动触发校验
-//     await formEl.validate((valid, fields) => {
-//         if (valid) {
-//             // 注册页面
-//             if (formType.value) {
-//                 userAuthentication(registerForm).then(({ data }) => {
-//                     if(data.code === 10000) {
-//                         ElMessage.success('注册成功，请登录')
-//                         formType.value = 0
-//                     }
-//                 })
-//             } else {
-//             // 登录页面
-//                 login(registerForm).then(({ data }) => {
-//                     if(data.code === 10000) {
-//                         ElMessage.success('登录成功！')
-//                         console.log(data)
-//                         // 将token和用户信息缓存到浏览器
-//                         localStorage.setItem('pz_token', data.data.token)
-//                         localStorage.setItem('pz_userInfo', JSON.stringify(data.data.userInfo))
-//                         menuPermissions().then(({ data }) => {
-//                             store.commit('dynamicMenu', data.data)
-//                             console.log(routerList, 'routerList')
-//                             toRaw(routerList.value).forEach(item => {
-//                                 router.addRoute('main', item)  
-//                             })
-//                             router.push('/')
-//                         })
-//                     }
-//                 })
-//             }
-//         } else {
-//             console.log('error submit!', fields)
-//         }
-//     })
-// }
+const submitForm = async(formEl) => {
+    console.log("通过1")
+    if (!formEl) return
+    console.log("通过2")
+    console.log(registerFormRef.value)
+    // 手动触发校验
+    await formEl.validate((valid, fields) => {
+        console.log("通过3")
+        if (valid) {
+            register(registerForm).then(({ data }) => {
+                if(data.code === 0) {
+                    ElMessage.success('注册成功！')
+                    console.log('data', data)
+                    // 将token和用户信息缓存到浏览器
+                    localStorage.setItem('fs_token', data.data.token)
+                    localStorage.setItem('fs_user', JSON.stringify(data.data.user))
+                    // menuPermissions().then(({ data }) => {
+                    //     store.commit('dynamicMenu', data.data)
+                    //     console.log(routerList, 'routerList')
+                    //     toRaw(routerList.value).forEach(item => {
+                    //         router.addRoute('main', item)  
+                    //     })
+                    //     router.push('/')
+                    // })
+                }
+                router.push('/')
+            })
+        } else {
+            console.log('error submit!', fields)
+        }
+    })
+}
 
 </script>
 
@@ -307,17 +295,17 @@ const countdownChange = (email) => {
                 }
             }
         }
-        
+
         // 回到登录界面按钮
         .backToLogin-link {
             width: 100%;
-                justify-content: center;
+            justify-content: center;
+            font-size: 14px;
+
+            .el-link {
                 font-size: 14px;
-                .el-link {
-                    font-size: 14px;
             }
         }
     }
 }
-
 </style>
