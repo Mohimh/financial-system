@@ -185,8 +185,8 @@ const EMAIL_OPTIONS = [
 
 // 确认邮箱格式（一并添加到email中）
 const handleSuffixChange = (newSuffix) => {
-    const prefix = registerForm.email.split('@')[0]; // 获取当前邮箱前缀
-    registerForm.email = prefix + newSuffix; // 拼接完整邮箱
+    const prefix = emailLoginForm.email.split('@')[0]; // 获取当前邮箱前缀
+    emailLoginForm.email = prefix + newSuffix; // 拼接完整邮箱
 };
 
 // 账号登录表单数据
@@ -302,7 +302,7 @@ const countdownChange = () => {
     flag = true
 
     // 发送验证码
-    getCode({ target: registerForm.email, vType: 'email' }).then(({ data }) => {
+    getCode({ target: emailLoginForm.email, vType: 'email' }).then(({ data }) => {
         console.log(data, 'data')
         if (data.code === 0) {
             ElMessage.success('发送成功')
@@ -323,24 +323,28 @@ const submitForm = async(formEl) => {
         if (valid) {
             // 用户名登录
             if (formPage.value === 0) {
-                login(idLoginForm).then(({ data }) => {
+                console.log(idLoginForm.userName)
+                login(idLoginForm, { type: 'username' }).then(({ data }) => {
                     if(data.code === 0) {
                         ElMessage.success('登录成功')
                         console.log('data', data)
                         // 将token和用户信息缓存到浏览器
                         localStorage.setItem('fs_token', data.data.token)
+                        localStorage.setItem('fs_expiresAt', data.data.expiresAt)
                         localStorage.setItem('fs_user', JSON.stringify(data.data.user))
                         router.push('/')
                     }
                 })
             } else {
             // 邮箱登录
-                login(emailLoginForm).then(({ data }) => {
+                console.log(emailLoginForm.email)
+                login(emailLoginForm, { type: 'email' }).then(({ data }) => {
                     if(data.code === 0) {
                         ElMessage.success('登录成功！')
                         console.log(data)
                         // 将token和用户信息缓存到浏览器
                         localStorage.setItem('fs_token', data.data.token)
+                        localStorage.setItem('fs_expiresAt', data.data.expiresAt)
                         localStorage.setItem('fs_user', JSON.stringify(data.data.user))
                         // menuPermissions().then(({ data }) => {
                         //     store.commit('dynamicMenu', data.data)
@@ -350,6 +354,7 @@ const submitForm = async(formEl) => {
                         //     })
                         //     router.push('/')
                         // })
+                        router.push('/')
                     }
                 })
             }

@@ -14,8 +14,18 @@ export const login = (data) => {
     return request.post('/base/login', data)
 }
 
-
 // 员工列表
-// export const stuffList = (params) => {
-//     return request.get
-// }
+export const stuffList = (params) => {
+    return request.get('/stuff', { params })
+}
+
+// 创建员工
+export const stuffCreate = (data) => {
+    return request.post('/stuff', data)
+}
+
+// 删除员工
+export const stuffDel = () => {
+    return request.delete('/stuff/{id}')
+}
+

@@ -46,8 +46,8 @@
         </el-table>
         <div class="pagination-info">
             <el-pagination
-                v-model:current-page="paginationData.pageNum"
-                v-model:page-size="paginationData.pageSize"
+                v-model:current-page="paginationData.page"
+                v-model:page-size="paginationData.page_size"
                 :page-sizes="[5, 10]"
                 size="small"
                 :background="false"
@@ -133,47 +133,34 @@
 </template>
 
 <script setup>
-import { ref, reactive, nextTick } from 'vue'
+import { ref, reactive, nextTick, onMounted } from 'vue'
+import { stuffList } from '@/api'
 
 // 分页
 const paginationData = reactive({
-    pageNum: 1,
-    pageSize: 10
+    page: 1,
+    page_size: 10
 })
 
 // 测试数据
 const tableData = reactive({
-    list: 
-    [
-        {
-            department: '研发部',
-            account: '2024001',
-            name: '张小斐',
-            gender: 1,
-            birth: '1996-07-11',
-            tel: '11111111',
-            email: '111@qq.com',
-            entry: '2020-08-01',
-            address: '广东深圳',
-            state: true,
-            enter: '2024-11-16 21:13:04'
-        },
-        {
-            department: '人事部',
-            account: '2024002',
-            name: '张亮',
-            gender: 0,
-            birth: '1990-08-16',
-            tel: '11111112',
-            email: '111324@qq.com',
-            entry: '2020-08-01',
-            address: '广东深圳',
-            state: true,
-            enter: '2024-11-16 21:13:04'
-        }
-    ],
-    total: 10
+    list: [],
+    total: 0
 })
+
+onMounted(() => {
+    getListData()
+})
+
+// 请求列表
+const getListData = () => {
+    stuffList(paginationData).then(({ data }) => {
+        console.log(data, 'stuffList')
+        const { list, total } = data.data
+        tableData.list = list
+        tableData.total = total
+    })
+}
 
 const open = (rowData = {}) => {
     dialogFormVisable.value = true
@@ -235,11 +222,13 @@ const confirm = async (formEl) => {
     if (!formEl) return
 }
 
-const handleSizeChange = () => {
-
+const handleSizeChange = (val) => {
+    paginationData.page_size = val
+    getListData()
 }
-const handleCurrentChange = () => {
-    
+const handleCurrentChange = (val) => {
+    paginationData.page = val
+    getListData()
 }
 
 </script>
