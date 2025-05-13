@@ -10,12 +10,11 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // 路由守卫
 router.beforeEach((to, from) => {
     const token = localStorage.getItem('fs_token')
-    const expiresAt = localStorage.getItem('fs_expiresAt')
     // 非登录页面token不存在
-    if (!token && !expiresAt && to.path !== '/login') {
+    if (!token && to.path !== '/login') {
         return '/login'
-    } else if (token && expiresAt && to.path === '/login') {
-        return '/'
+    } else if (token && to.path === '/login') {
+        return '/home'
     } else {
         return true
     }
