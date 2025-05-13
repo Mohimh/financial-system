@@ -19,7 +19,7 @@
             <el-table-column prop="birth" label="生日"/>
             <el-table-column prop="tel" label="电话"/>
             <el-table-column prop="email" label="邮箱" width="150px"/>
-            <el-table-column prop="entry" label="入职"/>
+            <el-table-column prop="entry" label="入职时间"/>
             <el-table-column prop="address" label="地址"/>
             <el-table-column prop="state" label="状态">
                 <template #default="scoped">
@@ -149,15 +149,15 @@ const tableData = reactive({
 })
 
 onMounted(() => {
-    getListData()
+    // getListData()
 })
 
 // 请求列表
 const getListData = () => {
     stuffList(paginationData).then(({ data }) => {
         console.log(data, 'stuffList')
-        const { list, total } = data.data
-        tableData.list = list
+        const { stuffs, total } = data.data
+        tableData.list = stuffs
         tableData.total = total
     })
 }
@@ -201,7 +201,7 @@ const rules = reactive({
 
 const DEPARTMENT_OPTIONS = [
   { label: '研发部', value: '研发部' },
-  { label: '人事部', value: '人事部' },
+  { label: '人事部', value: '人事部' }, 
 ]
 
 const form = reactive({

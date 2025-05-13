@@ -27,21 +27,25 @@
             </div>
         </div>
         <div class="footer flex-box">
-            <el-button
-                :class="{ 'active': activePath === '/home' }" 
-                @click="homeClick"
-            >首页</el-button>
-            <el-button 
-                v-for="(item, index) in selectMenu" 
-                :key="item.path" 
-                :class="{ 'active': activePath === item.path }" 
-                @click="pageClick(item.path)"
-            >
-                <!-- <router-link class="text flex-box" :to="{ path: item.path }"> -->
-                {{ item.name }}
-                <!-- </router-link> -->
-                <el-icon class='close' size="12" @click="closeTab(item, index)"><Close /></el-icon>
-            </el-button>
+            <el-scrollbar>
+                <div class="scrollbar-flex-content">
+                    <el-button
+                        :class="{ 'active': activePath === '/home' }" 
+                        @click="homeClick"
+                    >首页</el-button>
+                    <el-button 
+                        v-for="(item, index) in selectMenu" 
+                        :key="item.path" 
+                        :class="{ 'active': activePath === item.path }" 
+                        @click="pageClick(item.path)"
+                    >
+                        <!-- <router-link class="text flex-box" :to="{ path: item.path }"> -->
+                        {{ item.name }}
+                        <!-- </router-link> -->
+                        <el-icon class='close' size="12" @click="closeTab(item, index)"><Close /></el-icon>
+                    </el-button>
+                </div>
+            </el-scrollbar>
         </div>
     </div>
     
@@ -150,7 +154,7 @@ const handleClick = (command) => {
     width: 100%;
     box-shadow: 15px 15px 15px rgba(4, 4, 4, 0.05);
     .top {
-        height: 60%;
+        height: 50%;
         box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05);
         border-bottom: 1px solid transparent;
         justify-content: space-between;
@@ -171,11 +175,30 @@ const handleClick = (command) => {
         }
     }
     .footer {
-        height: 40%;
+        height: 50%;
         .el-button {
             margin: 0 5px;
+            margin-top: 9px;
         }
     }
+}
+
+.scrollbar-flex-content {
+    display: flex;
+    width: fit-content;
+}
+.scrollbar-demo-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 50px;
+    margin: 10px;
+    text-align: center;
+    border-radius: 4px;
+    background: var(--el-color-danger-light-9);
+    color: var(--el-color-danger);
 }
 
 </style>

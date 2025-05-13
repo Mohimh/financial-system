@@ -13,7 +13,7 @@ http.interceptors.request.use(function (config) {
   // 不需要添加token的api
   const whiteUrl = ['/base/captcha', '/base/login', '/base/register']
   if (token && !whiteUrl.includes(config.url)) {
-      config.headers['Authorization'] = token
+      config.headers['x-token'] = token
   }
   return config;
 }, function (error) {
@@ -32,8 +32,8 @@ http.interceptors.response.use(function (response) {
       ElMessage.warning(response.data.msg)
   }
   if (response.data.code === -2) {
-      localStorage.removeItem('financial_token')
-      // localStorage.removeItem('pz_userInfo')
+      localStorage.removeItem('fs_token')
+      localStorage.removeItem('fs_user')
       // localStorage.removeItem('pz_v3pz')
       window.location.href = window.location.origin
   }

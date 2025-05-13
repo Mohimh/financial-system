@@ -330,7 +330,6 @@ const submitForm = async(formEl) => {
                         console.log('data', data)
                         // 将token和用户信息缓存到浏览器
                         localStorage.setItem('fs_token', data.data.token)
-                        localStorage.setItem('fs_expiresAt', data.data.expiresAt)
                         localStorage.setItem('fs_user', JSON.stringify(data.data.user))
                         router.push('/')
                     }
@@ -344,7 +343,6 @@ const submitForm = async(formEl) => {
                         console.log(data)
                         // 将token和用户信息缓存到浏览器
                         localStorage.setItem('fs_token', data.data.token)
-                        localStorage.setItem('fs_expiresAt', data.data.expiresAt)
                         localStorage.setItem('fs_user', JSON.stringify(data.data.user))
                         // menuPermissions().then(({ data }) => {
                         //     store.commit('dynamicMenu', data.data)

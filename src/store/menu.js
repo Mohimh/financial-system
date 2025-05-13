@@ -1,29 +1,13 @@
+import router from "@/router/index"
+
 const state = {
     isCollapse: false,
     selectMenu: [],
-    routerList: [
-        {
-            path: 'home',
-            meta: { id: '1', name: '首页', icon: 'HomeFilled', path: '/home'},
-        },
-        {
-            path: 'department',
-            meta: { id: '2', name: '部门信息', icon: 'Postcard', path: '/department'},
-        },
-        {
-            path: 'stuff',
-            meta: { id: '3', name: '员工管理', icon: 'User', path: '/stuff'},
-        },
-        {
-            path: 'salary',
-            meta: { id: '4', name: '工资管理', icon: 'ScaleToOriginal', path: '/salary'},
-        },
-        {
-            path: 'reimbursement',
-            meta: { id: '5', name: '日常报销', icon: 'DocumentChecked', path: '/reimbursement'},
-        }
-    ]
+    routerList: router.options.routes[0].children,
+    activeIndex: ''
 }
+
+console.log(router.options.routes[0].children)
 
 const mutations = {
     // 收折侧边栏
@@ -67,7 +51,7 @@ const mutations = {
         state.routerList = payload
     },
     updateMenuActive(state, payload) {
-        state.menuActive = payload
+        state.activeIndex = payload
     }
 }
 
