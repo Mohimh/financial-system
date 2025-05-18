@@ -32,12 +32,12 @@
             </el-table-column>
             <el-table-column prop="enter" label="录入时间" width="175px"/>
             <el-table-column label="操作">
-                <template #default="scoped">
-                    <el-link :underline="false" type="primary" @click="edit(scoped.row)">
+                <template #default="{row}">
+                    <el-link :underline="false" type="primary" @click="edit(row)">
                         <el-icon><EditPen /></el-icon>
                         编辑
                     </el-link>
-                    <el-link :underline="false" type="danger" @click="cancel(scoped.row)">
+                    <el-link :underline="false" type="danger" @click="cancel(row)">
                         <el-icon><Delete /></el-icon>
                         删除
                     </el-link>

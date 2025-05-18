@@ -25,7 +25,16 @@ export const stuffCreate = (data) => {
 }
 
 // 删除员工
-export const stuffDel = () => {
-    return request.delete('/stuff/{id}')
-}
+// export const stuffDel = () => {
+//     return request.delete('/stuff/{id}')
+// }
 
+// 查询固定资产
+export const assetRead = (params) => {
+    return request.get('/asset', { params })
+} 
+
+// 查询会计科目列表
+export const accountRead = (params) => {
+    return request.get('/finance/chartOfAccounts/list', { params })
+}

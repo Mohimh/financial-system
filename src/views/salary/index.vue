@@ -4,6 +4,7 @@
             <el-icon><CirclePlus/></el-icon>
             新增
         </el-button>
+
         <el-table :data="tableData.list" border stripe style="width: auto">
             <el-table-column prop="month" label="月份"/>
             <el-table-column prop="department" label="部门"/>
@@ -15,17 +16,17 @@
             <el-table-column prop="deduct" label="其他扣除"/>
             <el-table-column prop="total" label="工资合计"/>
             <el-table-column label="状态">
-                <template #default="scoped">
-                    <el-tag :type="scoped.row.state === '0' ? 'info' : 'success'">
-                        {{ scoped.row.state === '0' ? '待发放' : '已发放' }}
+                <template #default="{ row }">
+                    <el-tag :type="row.state === '0' ? 'info' : 'success'">
+                        {{ row.state === '0' ? '待发放' : '已发放' }}
                     </el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="notes" label="备注"/>
             <el-table-column prop="submitDate" label="提交日期"/>
             <el-table-column label="操作" width="200px">
-                <template #default="scoped">
-                    <el-link :underline="false" type="primary" @click="edit(scoped.row)">
+                <template #default="{ row }">
+                    <el-link :underline="false" type="primary" @click="edit(row)">
                         <el-icon><EditPen /></el-icon>
                         编辑
                     </el-link>
@@ -33,7 +34,7 @@
                         <el-icon><CircleCheck /></el-icon>
                         发放
                     </el-link>
-                    <el-link :underline="false" type="danger">
+                    <el-link :underline="false" type="danger" @click="cancel(row)">
                         <el-icon><Delete /></el-icon>
                         删除
                     </el-link>
@@ -56,7 +57,7 @@
         <el-dialog
             v-model="dialogFormVisable"
             :before-close="beforeClose"
-            title="工资信息添加"
+            title="工资信息"
             width="400"
         >
             <el-form
@@ -79,7 +80,6 @@
                     <el-select
                         v-model="form.department"
                         placeholder="请选择部门"
-                        size="default"
                         style="width: 240px"
                     >
                         <el-option
@@ -359,12 +359,8 @@ const confirm = async (formEl) => {
     // })
 }
 
-const handleSizeChange = () => {
-
-}
-const handleCurrentChange = () => {
-    
-}
+const handleSizeChange = () => {}
+const handleCurrentChange = () => {}
 </script>
 
 <style lang="less" scoped>

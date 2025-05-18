@@ -101,7 +101,7 @@
                     </el-form-item>
                 </el-form>
                 <el-button type="primary" class="login-button" @click="submitForm(emailFormRef)">
-                    登录&nbsp;/&nbsp;注册
+                    登录
                 </el-button>
                 <el-text class="login-help flex-box">
                     <el-link :underline="false">企业级登录</el-link>
@@ -192,13 +192,15 @@ const handleSuffixChange = (newSuffix) => {
 // 账号登录表单数据
 const idLoginForm = reactive({
     userName: '',
-    passWord: ''
+    passWord: '',
+    type: 'username'
 })
 
 // 手机号登录表单数据
 const emailLoginForm = reactive({
     email: '',
-    captcha: ''
+    captcha: '',
+    type: 'email'
 })
 
 // 账号校验
@@ -324,7 +326,7 @@ const submitForm = async(formEl) => {
             // 用户名登录
             if (formPage.value === 0) {
                 console.log(idLoginForm.userName)
-                login(idLoginForm, { type: 'username' }).then(({ data }) => {
+                login(idLoginForm).then(({ data }) => {
                     if(data.code === 0) {
                         ElMessage.success('登录成功')
                         console.log('data', data)
@@ -337,7 +339,8 @@ const submitForm = async(formEl) => {
             } else {
             // 邮箱登录
                 console.log(emailLoginForm.email)
-                login(emailLoginForm, { type: 'email' }).then(({ data }) => {
+                login(emailLoginForm).then(({ data }) => {
+                    console.log('登陆前邮箱', emailLoginForm.email)
                     if(data.code === 0) {
                         ElMessage.success('登录成功！')
                         console.log(data)
