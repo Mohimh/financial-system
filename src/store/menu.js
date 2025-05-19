@@ -7,7 +7,7 @@ const state = {
     activeIndex: ''
 }
 
-console.log(router.options.routes[0].children)
+// console.log(router.options.routes[0].children)
 
 const mutations = {
     // 收折侧边栏

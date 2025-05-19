@@ -14,7 +14,22 @@ export const login = (data) => {
     return request.post('/base/login', data)
 }
 
-// 员工列表
+// 获取部门详情
+export const departmentDetail = () => {
+    return request.get(`/department/detail/${params.id}`)
+}
+
+// 获取部门列表
+export const departmentList = (params) => {
+    return request.get('/department/list', { params })
+}
+
+// 创建部门
+export const departmentCreate = (data) => {
+    return request.post('/department/create', data)
+}
+
+// 获取员工列表
 export const stuffList = (params) => {
     return request.get('/stuff', { params })
 }

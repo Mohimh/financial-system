@@ -25,8 +25,8 @@
 
         <div class="pagination-info">
             <el-pagination
-                v-model:current-page="paginationData.pageNum"
-                v-model:page-size="paginationData.pageSize"
+                v-model:current-page="paginationData.page"
+                v-model:page-size="paginationData.page_size"
                 :page-sizes="[5, 10]"
                 size="small"
                 :background="false"
@@ -82,8 +82,8 @@ import { ref, reactive, nextTick, onMounted } from 'vue';
 import { accountRead } from '@/api';
 
 const paginationData = reactive({
-    pageNum: 1,
-    pageSize: 10
+    page: 1,
+    page_size: 10
 })
 
 const tableData = ({

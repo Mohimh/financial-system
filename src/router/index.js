@@ -37,6 +37,8 @@ import UserAuth from '@/views/systemManage/userAuth/index.vue'
 import SysConfig from '@/views/systemManage/sysConfig/index.vue'
 import OpLogs from '@/views/systemManage/opLogs/index.vue'
 
+import SelfInformation from '@/views/selfInformation/index.vue'
+
 const routes = [
   {
     path: '/',
@@ -226,6 +228,11 @@ const routes = [
   {
     path: '/login',
     component: Login
+  },
+  {
+    path: '/selfInformation',
+    meta: { name: '个人信息中心' },
+    component: SelfInformation
   }
 ]
 

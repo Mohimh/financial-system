@@ -134,7 +134,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
-import { stuffList } from '@/api'
+import { stuffList, stuffCreate } from '@/api'
 
 // 分页
 const paginationData = reactive({
@@ -149,7 +149,7 @@ const tableData = reactive({
 })
 
 onMounted(() => {
-    // getListData()
+    getListData()
 })
 
 // 请求列表
@@ -220,6 +220,7 @@ const formRef = ref()
 
 const confirm = async (formEl) => {
     if (!formEl) return
+    
 }
 
 const handleSizeChange = (val) => {

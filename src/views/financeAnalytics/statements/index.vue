@@ -21,15 +21,51 @@ import FinancialTable from '@/components/financialTable.vue'
 const activeTab = ref('balance')
 
 // 模拟数据
+// 资产负债表数据
 const balanceData = ref({
   columns: [
     { prop: 'item', label: '项目' },
     { prop: 'value', label: '金额' }
   ],
   rows: [
-    { item: '流动资产', value: '¥1234万' },
-    { item: '非流动资产', value: '¥567万' },
-    // 更多数据...
+    { item: '流动资产合计', value: '¥1,234万' },
+    { item: '固定资产', value: '¥567万' },
+    { item: '无形资产', value: '¥89万' },
+    { item: '流动负债合计', value: '¥654万' },
+    { item: '长期负债', value: '¥321万' },
+    { item: '所有者权益', value: '¥915万' }
+  ]
+})
+
+// 利润表数据
+const incomeData = ref({
+  columns: [
+    { prop: 'item', label: '项目' },
+    { prop: 'value', label: '金额' }
+  ],
+  rows: [
+    { item: '营业收入', value: '¥2,500万' },
+    { item: '营业成本', value: '¥1,200万' },
+    { item: '营业利润', value: '¥800万' },
+    { item: '销售费用', value: '¥300万' },
+    { item: '管理费用', value: '¥200万' },
+    { item: '净利润', value: '¥450万' }
+  ]
+})
+
+// 现金流量表数据
+const cashflowData = ref({
+  columns: [
+    { prop: 'item', label: '项目' },
+    { prop: 'value', label: '金额' }
+  ],
+  rows: [
+    { item: '经营活动现金流入', value: '¥1,800万' },
+    { item: '经营活动现金流出', value: '¥1,300万' },
+    { item: '经营活动净流量', value: '¥500万' },
+    { item: '投资活动净流量', value: '¥-200万' },
+    { item: '筹资活动净流量', value: '¥300万' },
+    { item: '现金净增加额', value: '¥600万' }
   ]
 })
 

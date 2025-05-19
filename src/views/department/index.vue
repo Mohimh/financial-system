@@ -6,9 +6,20 @@
             新增
         </el-button>
         <el-table :data="tableData.list" border stripe style="width: auto;">
+            <el-table-column prop="id" label="部门id"/>
             <el-table-column prop="name" label="名称"/>
-            <el-table-column prop="notes" label="备注"/>
-            <el-table-column prop="enter" label="录入时间"/>
+            <el-table-column prop="manager" label="部门负责人"/>
+            <el-table-column prop="description" label="备注"/>
+            <el-table-column prop="createdAt" label="录入时间"/>
+            <el-table-column prop="state" label="状态">
+                <template #default="{ row }">
+                    <el-switch
+                        v-model="row.status"
+                        disabled
+                        :style="row.status === true ? '--el-switch-on-color: #13ce66' : '--el-switch-off-color: #ff4949'"
+                    />
+                </template>
+            </el-table-column>
             <el-table-column label="操作">
                 <template #default="{ row }">
                     <el-link :underline="false" type="primary" @click="edit(row)">
@@ -24,8 +35,8 @@
         </el-table>
         <div class="pagination-info">
             <el-pagination
-                v-model:current-page="paginationData.pageNum"
-                v-model:page-size="paginationData.pageSize"
+                v-model:current-page="paginationData.page"
+                v-model:page-size="paginationData.page_size"
                 :page-sizes="[5, 10]"
                 size="small"
                 :background="false"
@@ -48,19 +59,33 @@
                 :model="form"
                 :rules="rules"
             >
+                <el-form-item prop="code" label="部门编码">
+                    <el-input v-model="form.code" placeholder="请填写部门编码" />
+                </el-form-item>
                 <el-form-item prop="name" label="名称">
                     <el-input v-model="form.name" placeholder="请填写部门名称" />
                 </el-form-item>
-                <el-form-item prop="notes" label="备注">
+                <el-form-item prop="description" label="备注">
                     <el-input
-                        v-model="form.notes"
+                        v-model="form.description"
                         :rows="5"
                         type="textarea"
                         placeholder="请填写备注"
                     />
                 </el-form-item>
-                <el-form-item prop="enter" label="录入时间">
-                    <el-input v-model="form.enter" disabled/>
+                 <el-form-item prop="status" label="性别">
+                    <el-switch
+                        v-model="form.status"
+                        inline-prompt
+                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                        :active-value="1"
+                        :inactive-value="2"
+                        active-text="使用"
+                        inactive-text="禁用"
+                    />
+                </el-form-item>
+                <el-form-item prop="createdAt" label="录入时间">
+                    <el-input v-model="form.createdAt" disabled/>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -75,30 +100,36 @@
 </template>
 
 <script setup>
-import { ref, reactive, nextTick } from 'vue'
+import { ref, reactive, nextTick, onMounted } from 'vue'
+import { departmentList, departmentCreate } from '@/api'
+import { ElMessage } from 'element-plus';
 
 // 分页
 const paginationData = reactive({
-    pageNum: 1,
-    pageSize: 10
+    page: 1,
+    page_size: 10,
 })
 
 // 测试数据
-const tableData = ({
-    list: [
-        {
-            name: '销售部',
-            notes: '销售部',
-            enter: '2024-11-16 20:35:38'
-        },
-        {
-            name: '研发部',
-            notes: '研发部',
-            enter: '2024-11-16 20:35:29'
-        }
-    ],
-    total: 10
+const tableData = reactive({
+    list: [],
+    total: 0
 })
+
+onMounted(() => {   
+    getListData()
+})
+
+// 请求列表
+const getListData = () => {
+    departmentList(paginationData).then(({ data }) => {
+        const { list, total } = data.data
+        tableData.list = list
+        tableData.total = total
+        console.log(tableData.total)
+        console.log(tableData.list)
+    })
+}
 
 const open = (rowData = {}) => {
     dialogFormVisable.value = true
@@ -106,7 +137,7 @@ const open = (rowData = {}) => {
         if (rowData) {
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
         } else {
-            form.enter = new Date().toLocaleString();
+            form.createdAt = new Date().toLocaleString();
         }
     })
 } 
@@ -128,43 +159,51 @@ const beforeClose = () => {
 }
 
 const rules = reactive({
-    name: [{ required: true, trigger: 'blur', message: '请填写姓名'}]
+    code: [{ required: true, trigger: 'blur', message: '请填写部门编码'}],
+    name: [{ required: true, trigger: 'blur', message: '请填写姓名'}],
+    status: [{ required: true, trigger: 'blur', message: '请填写部门状态'}],
 })
 
 const formRef = ref()
 
 const form = reactive({
+    code: '',
+    id: '',
+    description: '',
+    manager: '',
     name: '',
-    notes: '',
-    enter: '',
+    status: 1,
+    createdAt: '',
 })
 
 const confirm = async (formEl) => {
     if (!formEl) return
-    // await formEl.validate((valid, fields) => {
-    //     if (valid) {
-    //         companion(form).then(({ data }) => {
-    //             if (data.code === 10000) {
-    //                 ElMessage.success('成功')
-    //                 beforeClose()
-    //                 getListData()
-    //             }
-    //             else {
-    //                 ElMessage.error(data.message)
-    //             }
-    //         })
-    //     }
-    //     else {
-    //         console.log('Error submit', fields)
-    //     }
-    // })
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            departmentCreate(form).then(({ data }) => {
+                if (data.code === 0) {
+                    ElMessage.success('成功')
+                    beforeClose()
+                    getListData()
+                }
+                else {
+                    ElMessage.error(data.message)
+                }
+            })
+        }
+        else {
+            console.log('Error submit', fields)
+        }
+    })
 }
 
-const handleSizeChange = () => {
-
+const handleSizeChange = (val) => {
+    paginationData.page_size = val
+    getListData()
 }
-const handleCurrentChange = () => {
-    
+const handleCurrentChange = (val) => {
+    paginationData.page = val
+    getListData()
 }
 
 </script>
