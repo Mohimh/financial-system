@@ -51,10 +51,8 @@ const menuData = computed(() => store.state.menu.routerList)
 // 菜单收折
 const isCollapse = computed(() => store.state.menu.isCollapse)
 
-const handleOpen = () => {
-}
-const handleClose = () => {
-}
+const handleOpen = () => {}
+const handleClose = () => {}
 </script>
 
 <style lang="less" scoped>

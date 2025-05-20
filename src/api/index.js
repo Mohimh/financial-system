@@ -10,8 +10,14 @@ export const register = (data) => {
     return request.post('/base/register', data)
 }
 
+// 登录接口
 export const login = (data) => {
     return request.post('/base/login', data)
+}
+
+// 修改用户信息接口
+export const updateUserInfo = (id) => {
+    return request.post(`/user/update/${id}`)
 }
 
 // 获取部门详情
@@ -28,6 +34,12 @@ export const departmentList = (params) => {
 export const departmentCreate = (data) => {
     return request.post('/department/create', data)
 }
+
+// 删除部门
+export const departmentDelete = (id) => {
+    return request.delete(`/department/delete/${id}`)
+}
+
 
 // 获取员工列表
 export const stuffList = (params) => {

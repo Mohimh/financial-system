@@ -38,6 +38,8 @@ import SysConfig from '@/views/systemManage/sysConfig/index.vue'
 import OpLogs from '@/views/systemManage/opLogs/index.vue'
 
 import SelfInformation from '@/views/selfInformation/index.vue'
+import PersonalInformation from '@/views/selfInformation/personalInformation/index.vue'
+import ChangeKey from '@/views/selfInformation/changeKey/index.vue'
 
 const routes = [
   {
@@ -231,8 +233,20 @@ const routes = [
   },
   {
     path: '/selfInformation',
-    meta: { name: '个人信息中心' },
-    component: SelfInformation
+    name: '个人信息中心',
+    component: SelfInformation,
+    children: [
+      {
+        path: 'personalInformation',
+        meta: { id: '1', name: '个人信息查询', path: '/selfInformation/personalInformation' },
+        component: PersonalInformation
+      },
+      {
+        path: 'changeKey',
+        meta: { id: '2', name: '修改密码', path: '/selfInformation/changeKey' },
+        component: ChangeKey
+      }
+    ]
   }
 ]
 

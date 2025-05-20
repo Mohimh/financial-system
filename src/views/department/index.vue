@@ -11,12 +11,15 @@
             <el-table-column prop="manager" label="部门负责人"/>
             <el-table-column prop="description" label="备注"/>
             <el-table-column prop="createdAt" label="录入时间"/>
-            <el-table-column prop="state" label="状态">
+            <el-table-column prop="status" label="状态">
+                <!-- 这里有问题 -->
                 <template #default="{ row }">
                     <el-switch
                         v-model="row.status"
                         disabled
-                        :style="row.status === true ? '--el-switch-on-color: #13ce66' : '--el-switch-off-color: #ff4949'"
+                        :active-value=1
+                        :inactive-value=2
+                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
                     />
                 </template>
             </el-table-column>
@@ -65,6 +68,9 @@
                 <el-form-item prop="name" label="名称">
                     <el-input v-model="form.name" placeholder="请填写部门名称" />
                 </el-form-item>
+                <el-form-item prop="manager" label="部门负责人">
+                    <el-input v-model="form.manager" placeholder="请填写部门负责人" />
+                </el-form-item>
                 <el-form-item prop="description" label="备注">
                     <el-input
                         v-model="form.description"
@@ -78,8 +84,8 @@
                         v-model="form.status"
                         inline-prompt
                         style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-                        :active-value="1"
-                        :inactive-value="2"
+                        :active-value=1
+                        :inactive-value=2
                         active-text="使用"
                         inactive-text="禁用"
                     />
@@ -101,7 +107,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
-import { departmentList, departmentCreate } from '@/api'
+import { departmentList, departmentCreate, departmentDelete } from '@/api'
 import { ElMessage } from 'element-plus';
 
 // 分页
@@ -145,10 +151,14 @@ const open = (rowData = {}) => {
 const edit = (rowData) => {
     dialogFormVisable.value = true
     open(rowData)
+    console.log(rowData)
 }
 
 const cancel = (rowData) => {
-
+    departmentDelete(rowData.id).then(() => {
+        ElMessage.success('删除成功')
+        getListData()
+    })
 }
 
 const dialogFormVisable = ref(false)
@@ -161,7 +171,7 @@ const beforeClose = () => {
 const rules = reactive({
     code: [{ required: true, trigger: 'blur', message: '请填写部门编码'}],
     name: [{ required: true, trigger: 'blur', message: '请填写姓名'}],
-    status: [{ required: true, trigger: 'blur', message: '请填写部门状态'}],
+    status: [{ required: true, trigger: 'blur' }],
 })
 
 const formRef = ref()
@@ -180,6 +190,7 @@ const confirm = async (formEl) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
+            console.log('测试数据状态值为：', form.status)
             departmentCreate(form).then(({ data }) => {
                 if (data.code === 0) {
                     ElMessage.success('成功')

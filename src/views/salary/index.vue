@@ -1,20 +1,22 @@
 <template>
     <div class="salary-table">
         <el-button type="primary" round size="small" @click="open(null)">
-            <el-icon><CirclePlus/></el-icon>
+            <el-icon>
+                <CirclePlus />
+            </el-icon>
             新增
         </el-button>
 
         <el-table :data="tableData.list" border stripe style="width: auto">
-            <el-table-column prop="month" label="月份"/>
-            <el-table-column prop="department" label="部门"/>
-            <el-table-column prop="stuff" label="员工"/>
-            <el-table-column prop="basicSalary" label="基本工资"/>
-            <el-table-column prop="meritSalary" label="绩效工资"/>
-            <el-table-column prop="insurance" label="五险一金"/>
-            <el-table-column prop="extra" label="额外奖励"/>
-            <el-table-column prop="deduct" label="其他扣除"/>
-            <el-table-column prop="total" label="工资合计"/>
+            <el-table-column prop="month" label="月份" />
+            <el-table-column prop="department" label="部门" />
+            <el-table-column prop="stuff" label="员工" />
+            <el-table-column prop="basicSalary" label="基本工资" />
+            <el-table-column prop="meritSalary" label="绩效工资" />
+            <el-table-column prop="insurance" label="五险一金" />
+            <el-table-column prop="extra" label="额外奖励" />
+            <el-table-column prop="deduct" label="其他扣除" />
+            <el-table-column prop="total" label="工资合计" />
             <el-table-column label="状态">
                 <template #default="{ row }">
                     <el-tag :type="row.state === '0' ? 'info' : 'success'">
@@ -22,128 +24,79 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="notes" label="备注"/>
-            <el-table-column prop="submitDate" label="提交日期"/>
+            <el-table-column prop="notes" label="备注" />
+            <el-table-column prop="submitDate" label="提交日期" />
             <el-table-column label="操作" width="200px">
                 <template #default="{ row }">
                     <el-link :underline="false" type="primary" @click="edit(row)">
-                        <el-icon><EditPen /></el-icon>
+                        <el-icon>
+                            <EditPen />
+                        </el-icon>
                         编辑
                     </el-link>
                     <el-link :underline="false" type="warning">
-                        <el-icon><CircleCheck /></el-icon>
+                        <el-icon>
+                            <CircleCheck />
+                        </el-icon>
                         发放
                     </el-link>
                     <el-link :underline="false" type="danger" @click="cancel(row)">
-                        <el-icon><Delete /></el-icon>
+                        <el-icon>
+                            <Delete />
+                        </el-icon>
                         删除
                     </el-link>
                 </template>
             </el-table-column>
         </el-table>
         <div class="pagination-info">
-            <el-pagination
-                v-model:current-page="paginationData.pageNum"
-                v-model:page-size="paginationData.pageSize"
-                :page-sizes="[5, 10]"
-                size="small"
-                :background="false"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="tableData.total"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-            />
+            <el-pagination v-model:current-page="paginationData.pageNum" v-model:page-size="paginationData.pageSize"
+                :page-sizes="[5, 10]" size="small" :background="false" layout="total, sizes, prev, pager, next, jumper"
+                :total="tableData.total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         </div>
-        <el-dialog
-            v-model="dialogFormVisable"
-            :before-close="beforeClose"
-            title="工资信息"
-            width="400"
-        >
-            <el-form
-                ref="formRef"
-                label-width="100px"
-                label-position="left"
-                :model="form"
-                :rules="rules"
-            >
+        <el-dialog v-model="dialogFormVisable" :before-close="beforeClose" title="工资信息" width="400">
+            <el-form ref="formRef" label-width="100px" label-position="left" :model="form" :rules="rules">
                 <el-form-item prop="month" label="月份">
-                    <el-date-picker
-                        v-model="form.month"
-                        type="month"
-                        placeholder="选择月份"
-                        value-format="YYYY-MM"
-                        size="default"
-                    />
+                    <el-date-picker v-model="form.month" type="month" placeholder="选择月份" value-format="YYYY-MM"
+                        size="default" />
                 </el-form-item>
                 <el-form-item prop="department" label="部门">
-                    <el-select
-                        v-model="form.department"
-                        placeholder="请选择部门"
-                        style="width: 240px"
-                    >
-                        <el-option
-                            v-for="item in DEPARTMENT_OPTIONS"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        />
+                    <el-select v-model="form.department" placeholder="请选择部门" style="width: 240px">
+                        <el-option v-for="item in DEPARTMENT_OPTIONS" :key="item.value" :label="item.label"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item prop="stuff" label="员工名称">
-                    <el-input v-model="form.stuff" placeholder="请输入员工名称"/>
+                    <el-input v-model="form.stuff" placeholder="请输入员工名称" />
                 </el-form-item>
                 <el-form-item prop="basicSalary" label="基本工资">
-                    <el-input 
-                        v-model.number="form.basicSalary"
-                        type="text"
-                        placeholder="请输入基本工资"
-                    />
+                    <el-input v-model.number="form.basicSalary" type="text" placeholder="请输入基本工资" />
                 </el-form-item>
                 <el-form-item prop="meritSalary" label="绩效工资">
-                    <el-input 
-                        v-model.number="form.meritSalary"
-                        type="text"
-                        placeholder="请输入绩效工资"
-                    />
+                    <el-input v-model.number="form.meritSalary" type="text" placeholder="请输入绩效工资" />
                 </el-form-item>
                 <el-form-item prop="insurance" label="五险一金">
-                    <el-input 
-                        v-model.number="form.insurance"
-                        type="text"
-                        placeholder="请输入五险一金"
-                    />
+                    <el-input v-model.number="form.insurance" type="text" placeholder="请输入五险一金" />
                 </el-form-item>
                 <el-form-item prop="extra" label="额外奖励">
-                    <el-input 
-                        v-model.number="form.extra"
-                        type="text"
-                        placeholder="请输入额外奖励"
-                    />
+                    <el-input v-model.number="form.extra" type="text" placeholder="请输入额外奖励" />
                 </el-form-item>
                 <el-form-item prop="deduct" label="其他扣除">
-                    <el-input 
-                        v-model.number="form.deduct"
-                        type="text"
-                        placeholder="请输入其他扣除"
-                    />
+                    <el-input v-model.number="form.deduct" type="text" placeholder="请输入其他扣除" />
                 </el-form-item>
                 <el-form-item label="工资合计">
-                    <el-input 
-                        :value="calculateTotal"
-                        disabled
-                    />
+                    <el-input :value="calculateTotal" disabled />
                 </el-form-item>
                 <el-form-item prop="notes" label="备注">
-                    <el-input v-model="form.notes"/>
+                    <el-input v-model="form.notes" />
                 </el-form-item>
                 <el-form-item prop="submitDate" label="提交日期">
-                    <el-input v-model="form.submitDate" disabled/>
+                    <el-input v-model="form.submitDate" disabled />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="info" @click="dialogFormVisable=false">取消</el-button>
+                    <el-button type="info" @click="dialogFormVisable = false">取消</el-button>
                     <el-button type="primary" @click="confirm(formRef)">确认</el-button>
                 </div>
             </template>
@@ -175,7 +128,7 @@ const tableData = ({
             total: 11700,
             state: '0',
             notes: '无',
-            submitDate: 2024-9-10
+            submitDate: 2024 - 9 - 10
         },
         {
             month: '2024-10',
@@ -189,7 +142,7 @@ const tableData = ({
             total: 8700,
             state: '1',
             notes: '无',
-            submitDate: 2024-9-10
+            submitDate: 2024 - 9 - 10
         }
     ],
     total: 10
@@ -203,9 +156,9 @@ const open = (rowData = {}) => {
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
         } else {
             form.enter = new Date().toLocaleString();
-        }   
+        }
     })
-} 
+}
 
 const DEPARTMENT_OPTIONS = [
     { value: '研发部', label: '研发部' },
@@ -234,7 +187,7 @@ const rules = reactive({
     stuff: [{ required: true, trigger: 'blur', message: '请填写姓名' }],
     basicSalary: [
         { required: true, message: '必填项' },
-        { 
+        {
             validator: (_, value, callback) => {
                 if (value === null || value === '') return callback()
                 if (!Number.isInteger(Number(value))) {
@@ -247,7 +200,7 @@ const rules = reactive({
     ],
     meritSalary: [
         { required: true, message: '必填项' },
-        { 
+        {
             validator: (_, value, callback) => {
                 if (value === null || value === '') return callback()
                 if (!Number.isInteger(Number(value))) {
@@ -260,7 +213,7 @@ const rules = reactive({
     ],
     insurance: [
         { required: true, message: '必填项' },
-        { 
+        {
             validator: (_, value, callback) => {
                 if (value === null || value === '') return callback()
                 if (!Number.isInteger(Number(value))) {
@@ -273,7 +226,7 @@ const rules = reactive({
     ],
     extra: [
         { required: true, message: '必填项' },
-        { 
+        {
             validator: (_, value, callback) => {
                 if (value === null || value === '') return callback()
                 if (!Number.isInteger(Number(value))) {
@@ -286,7 +239,7 @@ const rules = reactive({
     ],
     deduct: [
         { required: true, message: '必填项' },
-        { 
+        {
             validator: (_, value, callback) => {
                 if (value === null || value === '') return callback()
                 if (!Number.isInteger(Number(value))) {
@@ -299,7 +252,7 @@ const rules = reactive({
     ],
     total: [
         { required: true, message: '必填项' },
-        { 
+        {
             validator: (_, value, callback) => {
                 if (value === null || value === '') return callback()
                 if (!Number.isInteger(Number(value))) {
@@ -359,19 +312,21 @@ const confirm = async (formEl) => {
     // })
 }
 
-const handleSizeChange = () => {}
-const handleCurrentChange = () => {}
+const handleSizeChange = () => { }
+const handleCurrentChange = () => { }
 </script>
 
 <style lang="less" scoped>
-
 .salary-table {
     background-color: #fff;
+
     .el-button {
         margin: 15px 20px;
     }
+
     .el-table {
         margin: 0 20px;
+
         .el-link {
             margin: 0 5px;
         }

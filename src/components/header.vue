@@ -39,9 +39,7 @@
                         :class="{ 'active': activePath === item.path }" 
                         @click="pageClick(item.path)"
                     >
-                        <!-- <router-link class="text flex-box" :to="{ path: item.path }"> -->
                         {{ item.name }}
-                        <!-- </router-link> -->
                         <el-icon class='close' size="12" @click="closeTab(item, index)"><Close /></el-icon>
                     </el-button>
                 </div>
@@ -109,12 +107,12 @@ const closeTab = (item, index) => {
 const handleClick = (command) => {
     // 个人信息按钮
     if (command === "infomation") {
-        router.push('/selfInformation')
+        window.open('/#/selfInformation/personalInformation', '_blank');
     }
     
     // 修改密码按钮
     if (command === "changeKey") {
-        router.push('/selfInformation')
+        window.open('/#/selfInformation/changeKey', '_blank');
     }
 
     // 退出登录按钮
