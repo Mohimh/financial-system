@@ -52,7 +52,7 @@
         <el-dialog
             v-model="dialogFormVisable"
             :before-close="beforeClose"
-            title="部门添加"
+            :title="departmentTitle"
             width="400"
         >
             <el-form
@@ -107,8 +107,10 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
-import { departmentList, departmentCreate, departmentDelete } from '@/api'
+import { departmentList, departmentCreate, departmentDelete, departmentUpdate } from '@/api'
 import { ElMessage } from 'element-plus';
+
+const departmentTitle = ref('')
 
 // 分页
 const paginationData = reactive({
@@ -132,8 +134,6 @@ const getListData = () => {
         const { list, total } = data.data
         tableData.list = list
         tableData.total = total
-        console.log(tableData.total)
-        console.log(tableData.list)
     })
 }
 
@@ -141,8 +141,10 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
+            departmentTitle.value = '部门编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
         } else {
+            departmentTitle.value = '添加部门'
             form.createdAt = new Date().toLocaleString();
         }
     })
@@ -155,9 +157,11 @@ const edit = (rowData) => {
 }
 
 const cancel = (rowData) => {
-    departmentDelete(rowData.id).then(() => {
-        ElMessage.success('删除成功')
-        getListData()
+    departmentDelete(rowData.id).then(({ data }) => {
+        if (data.code === 0) {
+            ElMessage.success('删除成功')
+            getListData()
+        }
     })
 }
 
@@ -190,17 +194,29 @@ const confirm = async (formEl) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log('测试数据状态值为：', form.status)
-            departmentCreate(form).then(({ data }) => {
-                if (data.code === 0) {
-                    ElMessage.success('成功')
-                    beforeClose()
-                    getListData()
-                }
-                else {
-                    ElMessage.error(data.message)
-                }
-            })
+            if (departmentTitle.value === '添加部门') {
+                departmentCreate(form).then(({ data }) => {
+                    if (data.code === 0) {
+                        ElMessage.success('成功')
+                        beforeClose()
+                        getListData()
+                    }
+                    else {
+                        ElMessage.error(data.message)
+                    }
+                })
+            }
+            else {
+                console.log(form.id)
+                departmentUpdate(form.id, form).then(({ data }) => {
+                    if (data.code === 0) {
+                        ElMessage.success('成功')
+                        beforeClose()
+                        getListData()
+                    }
+                })
+            }
+            
         }
         else {
             console.log('Error submit', fields)

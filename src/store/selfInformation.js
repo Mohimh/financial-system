@@ -2,8 +2,9 @@ import router from "@/router/index"
 
 const state = {
     routerList: router.options.routes[2].children,
-    activeIndex: ''
+    activeIndex: '1'
 }
+
 
 const mutations = {
     updateMenuActive(state, payload) {

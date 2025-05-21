@@ -16,8 +16,13 @@ export const login = (data) => {
 }
 
 // 修改用户信息接口
-export const updateUserInfo = (id) => {
-    return request.post(`/user/update/${id}`)
+export const updateUserInfo = (id, data) => {
+    return request.put(`/user/update/${id}`, data)
+}
+
+// 重置密码
+export const userPassword = (id) => {
+    return request.put(`/user/password/${id}`)
 }
 
 // 获取部门详情
@@ -36,10 +41,14 @@ export const departmentCreate = (data) => {
 }
 
 // 删除部门
-export const departmentDelete = (id) => {
-    return request.delete(`/department/delete/${id}`)
+export const departmentDelete = (id, data) => {
+    return request.delete(`/department/delete/${id}`, data)
 }
 
+// 更新部门信息
+export const departmentUpdate = (id, data) => {
+    return request.put(`/department/update/${id}`, data)
+}
 
 // 获取员工列表
 export const stuffList = (params) => {

@@ -2,43 +2,43 @@
     <!-- 个人信息 -->
     <div class="personal-information">
         <el-form label-width="100px" class="flex-box">
-            <h1 style="padding-bottom: 20px;">个人基本信息</h1>
+            <h1>个人基本信息</h1>
+              <el-divider border-style="dashed" />
             <el-form-item label="头像" style="align-items: center;">
-                <el-upload
-                    action="http://localhost:8000/api/v1/user/update/{id}"
-                    :show-file-list="false" 
-                    :on-success="handleAvatarSuccess"
-                >
-                    <el-avatar v-if="user.headerImg" :src="user.headerImg" :size="75" class="avatar" />
-                    <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-                </el-upload>
+                <div class="avatar-box" @click="avatarClick" >
+                    <el-avatar 
+                        :src="form.headerImg" 
+                        :size="75" 
+                        class="avatar" 
+                    />
+                </div>
             </el-form-item>
-            <el-form-item label="用户id">
-                <el-input v-model="user.authorityId" disabled></el-input>
+            <el-form-item label="用户角色id">
+                <el-input v-model="form.authorityId" disabled></el-input>
             </el-form-item>
             <el-form-item label="用户名">
-                <el-input v-model="user.username"></el-input>
+                <el-input v-model="form.username" @change="handleInputChange"></el-input>
             </el-form-item>
             <el-form-item label="真实名称">
-                <el-input v-model="user.real_name"></el-input>
+                <el-input v-model="form.real_name" @change="handleInputChange"></el-input>
             </el-form-item>
             <el-form-item label="性别">
-                <el-input v-model="user.sex"></el-input>
+                <el-input v-model="form.sex" @change="handleInputChange"></el-input>
             </el-form-item>
             <el-form-item label="所在部门">
-                <el-input v-model="user.department" disabled></el-input>
+                <el-input v-model="form.department" disabled></el-input>
             </el-form-item>
             <el-form-item label="手机">
-                <el-input v-model="user.phone"></el-input>
+                <el-input v-model="form.phone" @change="handleInputChange"></el-input>
             </el-form-item>
             <el-form-item label="绑定邮箱">
-                <el-input v-model="user.email"></el-input>
+                <el-input v-model="form.email" disabled></el-input>
             </el-form-item>
             <el-form-item label="创建用户时间">
-                <el-input v-model="created_at" disabled></el-input>
+                <el-input v-model="form.created_at" disabled></el-input>
             </el-form-item>
-            <el-button @click="submitForm">
-                修改
+            <el-button @click="submitForm" :disable="!formChanged">
+                提交修改
             </el-button>
         </el-form>
     </div>
@@ -46,24 +46,57 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import { updateUserInfo } from '@/api'
 import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+
+const router = useRouter()
+const store = useStore()
 
 // 用户信息
 const user = JSON.parse(localStorage.getItem('fs_user'))
-const created_at = dayjs(user.created_at).format('YYYY-MM-DD')
+
+const form = reactive({
+    authorityId: '',
+    username: '',
+    real_name: '',
+    sex: '',
+    department: '',
+    phone: '',
+    email: '',
+    created_at: '',
+})
+
+onMounted(() => {
+    Object.assign(form, user)
+    form.created_at = dayjs(form.created_at).format('YYYY-MM-DD')
+})
+
+// 跟踪表单是否被修改
+const formChanged = ref(false)
+const originalValues = JSON.parse(JSON.stringify(user))
+
+// 处理输入变化
+const handleInputChange = () => {
+    formChanged.value = JSON.stringify(user) !== JSON.stringify(originalValues)
+}
 
 const submitForm = () => {
-    updateUserInfo(user.authorityId).then(() => {
-        ElMessage.success('修改成功')
+    updateUserInfo(user.id, form).then(({ data }) => {
+        if (data.code === 0) {
+            localStorage.setItem('fs_user', JSON.stringify(data.data.user))
+            ElMessage.success('修改成功')
+        }
     })
 }
 
-// 头像上传成功
-const handleAvatarSuccess = (res) => {
-  user.headerImg = URL.createObjectURL(res.raw)
+// 跳转修改头像页面
+const avatarClick = () => {
+    store.commit('updateMenuActive', '3'); // 提交组合 index
+    router.push('/selfInformation/changeAvatar');
 }
 
 </script>
@@ -79,5 +112,17 @@ const handleAvatarSuccess = (res) => {
 
 .personal-information {
     width: 100%;
+    .avatar {
+        transform: scale(1);
+        transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .avatar-box {
+        cursor: pointer;
+    }
+
+    .avatar-box:hover .avatar {
+        transform: scale(1.05);
+    }
 }
 </style>

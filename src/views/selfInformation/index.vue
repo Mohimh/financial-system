@@ -9,7 +9,7 @@
           class="aside"
           active-text-color="#ffd04b"
           background-color="#545c64"
-          default-active="1"
+          :default-active="activeIndex"
           text-color="#fff"
           @open="handleOpen"
           @close="handleClose"
@@ -25,14 +25,16 @@
           </el-menu-item>
         </el-menu>
           
-        <el-main class="flex-box"> <RouterView /> </el-main>
+        <el-main class="flex-box">
+          <RouterView /> 
+        </el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -43,10 +45,11 @@ const listData = computed(() => store.state.selfInformation.routerList)
 const activeIndex = computed(() => store.state.selfInformation.activeIndex);
 
 const handleClick = (item, activeIndex) => {
-    store.commit('addMenu', item.meta);
+    // store.commit('addMenu', item.meta);
     store.commit('updateMenuActive', activeIndex); // 提交组合 index
     router.push(item.meta.path);
 }
+
 
 const handleOpen = () => {}
 const handleClose = () => {}
@@ -69,8 +72,9 @@ const handleClose = () => {}
   
   .body {
     width: 60%;
-    background-color: #f1f1f1;
     height: 100%;
+    border:  1px solid var(--el-border-color);
+    box-shadow: var(--el-box-shadow-dark);
     .aside {
       width: 20%;
       .menu-item {
