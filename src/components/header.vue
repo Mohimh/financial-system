@@ -2,7 +2,6 @@
     <div class="head-box">
         <div class="top flex-box">
             <div class="top-left">
-                <el-icon class="icon" size="20" @click="store.commit('collapseMenu')"><Fold /></el-icon>
             </div>
             <div class="top-right">
                 <el-dropdown @command=handleClick>
@@ -190,7 +189,6 @@ const handleClick = (command) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
     height: 50px;
     margin: 10px;
     text-align: center;

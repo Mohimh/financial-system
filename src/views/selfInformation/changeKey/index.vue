@@ -101,6 +101,5 @@ const submitPassword = async (formEl) => {
 .change-key {
   width: 100%;
 
-  .el-form-item {}
 }
 </style>

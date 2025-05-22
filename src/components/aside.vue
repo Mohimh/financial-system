@@ -1,7 +1,7 @@
 <template>
     <el-scrollbar>
         <el-menu 
-            :style="{ width: !isCollapse ? '200px' : '64px' }"
+            :style="{ width:'200px' }"
             class="asider-container"
             :default-active="activeIndex" 
             @open="handleOpen"

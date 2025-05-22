@@ -6,13 +6,12 @@
             新增
         </el-button>
         <el-table :data="tableData.list" border stripe style="width: auto;">
-            <el-table-column prop="id" label="部门id"/>
+            <el-table-column prop="code" label="部门编码"/>
             <el-table-column prop="name" label="名称"/>
             <el-table-column prop="manager" label="部门负责人"/>
             <el-table-column prop="description" label="备注"/>
             <el-table-column prop="createdAt" label="录入时间"/>
             <el-table-column prop="status" label="状态">
-                <!-- 这里有问题 -->
                 <template #default="{ row }">
                     <el-switch
                         v-model="row.status"
@@ -40,7 +39,7 @@
             <el-pagination
                 v-model:current-page="paginationData.page"
                 v-model:page-size="paginationData.page_size"
-                :page-sizes="[5, 10]"
+                :page-sizes="[1, 5, 10]"
                 size="small"
                 :background="false"
                 layout="total, sizes, prev, pager, next, jumper"
@@ -79,7 +78,7 @@
                         placeholder="请填写备注"
                     />
                 </el-form-item>
-                 <el-form-item prop="status" label="性别">
+                 <el-form-item prop="status" label="部门状态">
                     <el-switch
                         v-model="form.status"
                         inline-prompt
@@ -89,9 +88,6 @@
                         active-text="使用"
                         inactive-text="禁用"
                     />
-                </el-form-item>
-                <el-form-item prop="createdAt" label="录入时间">
-                    <el-input v-model="form.createdAt" disabled/>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -109,13 +105,15 @@
 import { ref, reactive, nextTick, onMounted } from 'vue'
 import { departmentList, departmentCreate, departmentDelete, departmentUpdate } from '@/api'
 import { ElMessage } from 'element-plus';
+import dayjs, { Dayjs } from 'dayjs';
 
+// 部门弹窗详细功能
 const departmentTitle = ref('')
 
 // 分页
 const paginationData = reactive({
     page: 1,
-    page_size: 10,
+    page_size: 5,
 })
 
 // 测试数据
@@ -126,6 +124,7 @@ const tableData = reactive({
 
 onMounted(() => {   
     getListData()
+    console.log(paginationData)
 })
 
 // 请求列表
@@ -134,6 +133,9 @@ const getListData = () => {
         const { list, total } = data.data
         tableData.list = list
         tableData.total = total
+        tableData.list.forEach(item => {
+            item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD')
+        });
     })
 }
 
@@ -143,6 +145,7 @@ const open = (rowData = {}) => {
         if (rowData) {
             departmentTitle.value = '部门编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
+            form.createdAt = dayjs(form.createdAt).format('YYYY-MM-DD')
         } else {
             departmentTitle.value = '添加部门'
             form.createdAt = new Date().toLocaleString();
@@ -201,9 +204,6 @@ const confirm = async (formEl) => {
                         beforeClose()
                         getListData()
                     }
-                    else {
-                        ElMessage.error(data.message)
-                    }
                 })
             }
             else {
@@ -216,7 +216,6 @@ const confirm = async (formEl) => {
                     }
                 })
             }
-            
         }
         else {
             console.log('Error submit', fields)
@@ -226,6 +225,7 @@ const confirm = async (formEl) => {
 
 const handleSizeChange = (val) => {
     paginationData.page_size = val
+    paginationData.page = 1 // 关键！修改每页大小后必须回到第一页
     getListData()
 }
 const handleCurrentChange = (val) => {
