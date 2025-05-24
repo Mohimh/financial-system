@@ -133,9 +133,13 @@ const getListData = () => {
         const { list, total } = data.data
         tableData.list = list
         tableData.total = total
-        tableData.list.forEach(item => {
-            item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD')
-        });
+        try{
+            tableData.list.forEach(item => {
+                item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD')
+            });
+        } catch {
+            console.log('暂无无部门')
+        }
     })
 }
 

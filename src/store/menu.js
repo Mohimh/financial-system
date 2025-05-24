@@ -1,19 +1,13 @@
 import router from "@/router/index"
 
 const state = {
-    isCollapse: false,
     selectMenu: [],
+    selectMenuIndex: [],
     routerList: router.options.routes[0].children,
     activeIndex: ''
 }
 
-// console.log(router.options.routes[0].children)
-
 const mutations = {
-    // 收折侧边栏
-    collapseMenu (state) {
-        state.isCollapse = !state.isCollapse
-    },
     // 增加导航栏
     addMenu (state, payload) {
         if (payload.path === '/home') {
@@ -27,6 +21,18 @@ const mutations = {
     closeMenu (state, payload) {
         const index = state.selectMenu.findIndex(val => val.name === payload.name)
         state.selectMenu.splice(index, 1)
+    },
+    // 点击导航栏
+    clickHeaderMenu (state, payload) {
+        const index = state.selectMenu.findIndex(val => val.path === payload)
+        state.activeIndex = state.selectMenuIndex[index]
+    },
+    // 更新被点击的侧边栏和导航栏
+    updateMenuActive(state, payload) {
+        state.activeIndex = payload
+        if (state.selectMenuIndex.findIndex(item => item === payload) === -1) {
+            state.selectMenuIndex.push(payload)
+        }
     },
     // 
     dynamicMenu (state, payload) {
@@ -50,9 +56,6 @@ const mutations = {
         // 拿到完整的路由数据
         state.routerList = payload
     },
-    updateMenuActive(state, payload) {
-        state.activeIndex = payload
-    }
 }
 
 export default {

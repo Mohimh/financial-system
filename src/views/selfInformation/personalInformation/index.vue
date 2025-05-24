@@ -13,9 +13,6 @@
                     />
                 </div>
             </el-form-item>
-            <el-form-item label="用户角色id">
-                <el-input v-model="form.authorityId" disabled></el-input>
-            </el-form-item>
             <el-form-item label="用户名">
                 <el-input v-model="form.username" @change="handleInputChange"></el-input>
             </el-form-item>
@@ -23,7 +20,17 @@
                 <el-input v-model="form.real_name" @change="handleInputChange"></el-input>
             </el-form-item>
             <el-form-item label="性别">
-                <el-input v-model="form.sex" @change="handleInputChange"></el-input>
+                <el-select 
+                    style="width: 196px;"
+                    v-model="form.sex" 
+                >
+                    <el-option 
+                        v-for="item in SEXOPTIONS"
+                        :key="item.value"
+                        :label="item.sex"
+                        :value="item.sex"
+                    />
+                </el-select>
             </el-form-item>
             <el-form-item label="所在部门">
                 <el-input v-model="form.department" disabled></el-input>
@@ -70,6 +77,11 @@ const form = reactive({
     created_at: '',
 })
 
+const SEXOPTIONS = [
+    { value: '1', sex: '男' },
+    { value: '2', sex: '女' },
+]
+
 onMounted(() => {
     Object.assign(form, user)
     form.created_at = dayjs(form.created_at).format('YYYY-MM-DD')
@@ -85,6 +97,7 @@ const handleInputChange = () => {
 }
 
 const submitForm = () => {
+    console.log(form)
     updateUserInfo(user.id, form).then(({ data }) => {
         if (data.code === 0) {
             localStorage.setItem('fs_user', JSON.stringify(data.data.user))
@@ -95,7 +108,7 @@ const submitForm = () => {
 
 // 跳转修改头像页面
 const avatarClick = () => {
-    store.commit('updateMenuActive', '3'); // 提交组合 index
+    store.commit('updateInformationActive', '3'); // 提交组合 index
     router.push('/selfInformation/changeAvatar');
 }
 

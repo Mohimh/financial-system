@@ -23,7 +23,7 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
-import { updateUserInfo } from '@/api'
+import { updatePassword } from '@/api'
 import { ElMessage } from 'element-plus'
 
 const passwordFormRef = ref()
@@ -36,7 +36,8 @@ const passwordForm = reactive({
 })
 
 const userPwd = reactive({
-  passWord: ''
+  new_password: '',
+  old_password: '',
 })
 
 const user = JSON.parse(localStorage.getItem('fs_user'))
@@ -70,11 +71,14 @@ const submitPassword = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      userPwd.passWord = passwordForm.newPassword
-      updateUserInfo(user.id, userPwd).then(({ data }) => {
+      userPwd.old_password = passwordForm.oldPassword
+      userPwd.new_password = passwordForm.newPassword
+      updatePassword(user.id, userPwd).then(({ data }) => {
         if (data.code === 0) {
-          localStorage.setItem('fs_user', JSON.stringify(data.data.user))
-          ElMessage.success('密码修改成功')
+          localStorage.removeItem('fs_token')
+          localStorage.removeItem('fs_user')
+          window.location.href = window.location.origin
+          ElMessage.success(data.msg)
         }
       })
       passwordForm.oldPassword = ''

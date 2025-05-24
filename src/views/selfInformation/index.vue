@@ -42,12 +42,13 @@ const router = useRouter()
 const store = useStore()
 // 侧边栏
 const listData = computed(() => store.state.selfInformation.routerList)
-const activeIndex = computed(() => store.state.selfInformation.activeIndex);
-
+const activeIndex = computed(() => store.state.selfInformation.activeIndex)
+console.log('activeIndex', activeIndex.value)
+console.log('listData', listData.value)
 const handleClick = (item, activeIndex) => {
-    // store.commit('addMenu', item.meta);
-    store.commit('updateMenuActive', activeIndex); // 提交组合 index
-    router.push(item.meta.path);
+  store.commit('updateInformationActive', activeIndex); // 提交组合 index
+  console.log('activeIndex', activeIndex)
+  router.push(item.meta.path);
 }
 
 
@@ -64,13 +65,15 @@ const handleClose = () => {}
 }
 
 .personal-center {
+  background-color: #ffd45d64;
+  // height: 100vh;
   .header {
-    background-color: #ffffff;
     border-bottom: 1px solid #e7e7e7;
     height: 120px;
   } 
   
   .body {
+    background-color: #ffc7c7c2;
     width: 60%;
     height: 100%;
     border:  1px solid var(--el-border-color);

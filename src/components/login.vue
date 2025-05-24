@@ -333,7 +333,7 @@ const submitForm = async(formEl) => {
                         // 将token和用户信息缓存到浏览器
                         localStorage.setItem('fs_token', data.data.token)
                         localStorage.setItem('fs_user', JSON.stringify(data.data.user))
-                        router.push('/')
+                        router.push('/home')
                     }
                 })
             } else {
@@ -355,7 +355,7 @@ const submitForm = async(formEl) => {
                         //     })
                         //     router.push('/')
                         // })
-                        router.push('/')
+                        router.push('/home')
                     }
                 })
             }

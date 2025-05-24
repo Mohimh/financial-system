@@ -50,7 +50,6 @@
 
 
 <script setup>
-import { Fold } from '@element-plus/icons-vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import { computed, ref, watch } from 'vue';
@@ -61,6 +60,8 @@ const imgUrl = new URL('../../public/sparkle.jpg', import.meta.url).href
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+
+// 导航栏统计
 const selectMenu = computed(() => store.state.menu.selectMenu)
 const activePath = ref(route.path)
 
@@ -71,11 +72,13 @@ watch(() => route.path, (newPath) => {
 
 // 首页按钮
 const homeClick = () => {
+    store.commit('updateMenuActive', '0-1')
     activePath.value = '/home'
     router.push('/home')
 }
 
 const pageClick = (path) => {
+    store.commit('clickHeaderMenu', path)
     activePath.value = path
     router.push(path)
 }
@@ -90,7 +93,7 @@ const closeTab = (item, index) => {
     const selectMenuData = selectMenu.value
     if (index === selectMenuData.length) {
         if (!selectMenuData.length) {
-            router.push('/')
+            router.push('/home')
         } else {
             router.push({
                 path: selectMenuData[index - 1].path
@@ -106,11 +109,13 @@ const closeTab = (item, index) => {
 const handleClick = (command) => {
     // 个人信息按钮
     if (command === "infomation") {
+        store.commit('updateInformationActive', '1')
         window.open('/#/selfInformation/personalInformation', '_blank');
     }
     
     // 修改密码按钮
     if (command === "changeKey") {
+        store.commit('updateInformationActive', '2')
         window.open('/#/selfInformation/changeKey', '_blank');
     }
 
@@ -118,7 +123,6 @@ const handleClick = (command) => {
     if (command === "cancel") {
         localStorage.removeItem('fs_token')
         localStorage.removeItem('fs_user')
-        // localStorage.removeItem('pz_v3pz')
         window.location.href = window.location.origin
     }
 }
@@ -150,6 +154,7 @@ const handleClick = (command) => {
     height: 100%;
     width: 100%;
     box-shadow: 15px 15px 15px rgba(4, 4, 4, 0.05);
+    overflow: hidden;
     .top {
         height: 50%;
         box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05);
@@ -173,6 +178,7 @@ const handleClick = (command) => {
     }
     .footer {
         height: 50%;
+        max-width: 1446px;
         .el-button {
             margin: 0 5px;
             margin-top: 9px;
@@ -183,18 +189,7 @@ const handleClick = (command) => {
 .scrollbar-flex-content {
     display: flex;
     width: fit-content;
-}
-.scrollbar-demo-item {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50px;
-    margin: 10px;
-    text-align: center;
-    border-radius: 4px;
-    background: var(--el-color-danger-light-9);
-    color: var(--el-color-danger);
-}
+    overflow-x: auto;
+}   
 
 </style>

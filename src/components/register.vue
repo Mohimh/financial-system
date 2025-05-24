@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
 // import { getCode, userAuthentication, login, menuPermissions } from '../../api'
 import { getCode, register } from '@/api'
@@ -98,6 +98,7 @@ const store = useStore()
 
 // 切换注册界面 （勿删）
 const changeForm = () => {
+    registerFormRef.value?.resetFields()
     store.commit('changeMenu')
 }
 
@@ -106,7 +107,12 @@ const registerForm = reactive({
     userName: '',
     passWord: '',
     email: '',
-    captcha: '',
+    captcha: '', 
+})
+
+const emailRegisterForm = reactive({
+    target: '',
+    vType: 'email',
 })
 
 // 密码可见度(false不可见，true可见)
@@ -231,7 +237,8 @@ const countdownChange = () => {
     flag = true
 
     // 发送验证码
-    getCode({ target: registerForm.email, vType: 'email' }).then(({ data }) => {
+    emailRegisterForm.target = registerForm.email
+    getCode(emailRegisterForm).then(({ data }) => {
         console.log(data, 'data')
         if (data.code === 0) {
             ElMessage.success('发送成功')
@@ -250,6 +257,7 @@ const submitForm = async(formEl) => {
     // 手动触发校验
     await formEl.validate((valid, fields) => {
         if (valid) {
+            console.log(registerForm)
             register(registerForm).then(({ data }) => {
                 if(data.code === 0) {
                     ElMessage.success('注册成功！')
@@ -257,7 +265,7 @@ const submitForm = async(formEl) => {
                     // 将token和用户信息缓存到浏览器
                     localStorage.setItem('fs_token', data.data.token)
                     localStorage.setItem('fs_user', JSON.stringify(data.data.user))
-                    router.push('/')
+                    router.push('/home')
                     // menuPermissions().then(({ data }) => {
                     //     store.commit('dynamicMenu', data.data)
                     //     console.log(routerList, 'routerList')

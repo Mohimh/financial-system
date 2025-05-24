@@ -1,14 +1,13 @@
 <template>
     <el-scrollbar>
         <el-menu 
-            :style="{ width:'200px' }"
             class="asider-container"
             :default-active="activeIndex" 
+
             @open="handleOpen"
             @close="handleClose"
-            :collapse="isCollapse"
         >
-            <p class="logo-lg flex-box">{{isCollapse ? 'logo' : 'LOGO'}}</p>
+            <p class="logo-lg flex-box">logo</p>
             <TreeMenu :index="0" :menuData="menuData" />
         </el-menu>
     </el-scrollbar>
@@ -22,34 +21,31 @@ import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 
 const store = useStore()
-const route = useRoute()
+// const route = useRoute()
 
 // 获取 activeIndex
 const activeIndex = computed(() => store.state.menu.activeIndex);
 
 // 查找当前路径对应的组合 index
-const findMenuItemIndexByPath = (menuData, path, parentIndex = '') => {
-  for (const item of menuData) {
-    const currentIndex = parentIndex ? `${parentIndex}-${item.meta.id}` : `${item.meta.id}`;
-    if (item.meta.path === path) return currentIndex;
-    if (item.children?.length) {
-      const found = findMenuItemIndexByPath(item.children, path, currentIndex);
-      if (found) return found;
-    }
-  }
-  return null;
-};
+// const findMenuItemIndexByPath = (menuData, path, parentIndex = '') => {
+//   for (const item of menuData) {
+//     const currentIndex = parentIndex ? `${parentIndex}-${item.meta.id}` : `${item.meta.id}`;
+//     if (item.meta.path === path) return currentIndex;
+//     if (item.children?.length) {
+//       const found = findMenuItemIndexByPath(item.children, path, currentIndex);
+//       if (found) return found;
+//     }
+//   }
+//   return null;
+// };
 
-watch(() => route.path, (newPath) => {
-    const index = findMenuItemIndexByPath(menuData.value, newPath, '');
-    if (index) store.commit('updateMenuActive', index);
-});
+// watch(() => route.path, (newPath) => {
+//     const index = findMenuItemIndexByPath(menuData.value, newPath, '');
+//     if (index) store.commit('updateMenuActive', index);
+// });
 
 // 菜单列表
 const menuData = computed(() => store.state.menu.routerList)
-
-// 菜单收折
-const isCollapse = computed(() => store.state.menu.isCollapse)
 
 const handleOpen = () => {}
 const handleClose = () => {}
@@ -64,6 +60,7 @@ const handleClose = () => {}
 }
 
 .asider-container {
+    width: 200px;
     height: 100%;
     .logo-lg {
         height: 60px;

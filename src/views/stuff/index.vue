@@ -46,8 +46,8 @@
         </el-table>
         <div class="pagination-info">
             <el-pagination
-                v-model:current-page="paginationData.page"
-                v-model:page-size="paginationData.page_size"
+                v-model:current-page="stuffPaginationData.page"
+                v-model:page-size="stuffPaginationData.page_size"
                 :page-sizes="[5, 10]"
                 size="small"
                 :background="false"
@@ -63,6 +63,14 @@
             title="员工添加"
             width="500"
         >
+            <el-form :inline="true">
+                <el-form-item label="闲置员工">
+                    <el-select v-model="query.name" style="width: 200px;" placeholder="">
+                        <el-option v-for="item in subjectList" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                </el-form-item>
+            </el-form>
+
             <el-form
                 ref="formRef"
                 label-width="100px"
@@ -134,10 +142,10 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
-import { stuffList, stuffCreate } from '@/api'
+import { stuffList, stuffCreate, nonEmployeeList } from '@/api'
 
-// 分页
-const paginationData = reactive({
+// 员工分页
+const stuffPaginationData = reactive({
     page: 1,
     page_size: 10
 })
@@ -148,17 +156,56 @@ const tableData = reactive({
     total: 0
 })
 
+// 部门选项
+const DEPARTMENT_OPTIONS = [
+  { label: '研发部', value: '研发部' },
+  { label: '人事部', value: '人事部' }, 
+]
+
+// 表单字段
+const form = reactive({
+    department: '',
+    account: '',
+    name: '',
+    gender: null,
+    tel: '',
+    email: '',
+    entry: '',
+    address: '',
+    enter: '',
+})
+const formRef = ref()
+
+// 员工筛选项
+const query = reactive({
+    id: '',
+    name: '',
+})
+
+const nonUserData = reactive({
+    list: [],
+    total: 0
+})
+
 onMounted(() => {
     getListData()
+    getNonuserData()
 })
 
 // 请求列表
 const getListData = () => {
-    stuffList(paginationData).then(({ data }) => {
-        console.log(data, 'stuffList')
+    stuffList(stuffPaginationData).then(({ data }) => {
         const { stuffs, total } = data.data
         tableData.list = stuffs
         tableData.total = total
+    })
+}
+
+const getNonuserData = () => {
+    nonEmployeeList().then(({ data }) => {
+        const { users, total } = data.data
+        nonUserData.list = users
+        nonUserData.total = total
     })
 }
 
@@ -199,36 +246,17 @@ const rules = reactive({
     address: [{ required: true, trigger: 'blur', message: '请填写地址'}]
 })
 
-const DEPARTMENT_OPTIONS = [
-  { label: '研发部', value: '研发部' },
-  { label: '人事部', value: '人事部' }, 
-]
-
-const form = reactive({
-    department: '',
-    account: '',
-    name: '',
-    gender: null,
-    tel: '',
-    email: '',
-    entry: '',
-    address: '',
-    enter: '',
-})
-
-const formRef = ref()
-
 const confirm = async (formEl) => {
     if (!formEl) return
     
 }
 
 const handleSizeChange = (val) => {
-    paginationData.page_size = val
+    stuffPaginationData.page_size = val
     getListData()
 }
 const handleCurrentChange = (val) => {
-    paginationData.page = val
+    stuffPaginationData.page = val
     getListData()
 }
 

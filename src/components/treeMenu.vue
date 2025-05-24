@@ -7,9 +7,6 @@
                 @click="handleClick(item, `${props.index}-${item.meta.id}`)"
                 :key="`${props.index}-${item.meta.id}`"
             >
-            <!-- <el-icon v-if="item.meta.icon" size="20">
-                <component :is="item.meta.icon"></component>
-            </el-icon> -->
             <span>{{ item.meta.name }}</span>
             </el-menu-item>
 
@@ -17,9 +14,6 @@
                 v-else :index="`${props.index}-${item.meta.id}`"
             >
                 <template #title>
-                    <!-- <el-icon size="20">
-                        <component :is="item.meta.icon"></component>
-                    </el-icon> -->
                     <span>{{ item.meta.name }}</span>
                 </template>
                 <tree-menu :index="`${props.index}-${item.meta.id}`" :menuData="item.children" />
@@ -44,7 +38,8 @@ const props = defineProps(['index', 'menuData'])
 // 菜单点击事件
 const handleClick = (item, activeIndex) => {
     store.commit('addMenu', item.meta);
-    store.commit('updateMenuActive', activeIndex); // 提交组合 index
+    store.commit("updateMenuActive", activeIndex);
+
     router.push(item.meta.path);
 }
 
