@@ -6,7 +6,7 @@
             <div class="top-right">
                 <el-dropdown @command=handleClick>
                     <div class="el-dropdown-link flex-box">
-                        <el-avatar :size="60" :src="imgUrl" />
+                        <el-avatar :size="60" :src="user.avatar" />
                     </div>
                     <template #dropdown>
                         <el-dropdown-item command="infomation">
@@ -56,6 +56,7 @@ import { computed, ref, watch } from 'vue';
 
 
 const imgUrl = new URL('../../public/sparkle.jpg', import.meta.url).href
+const user = JSON.parse(localStorage.getItem('fs_user'))
 
 const store = useStore()
 const route = useRoute()

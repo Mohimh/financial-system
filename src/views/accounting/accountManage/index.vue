@@ -79,7 +79,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue';
-import { accountRead } from '@/api';
+// import { accountRead } from '@/api';
 
 const paginationData = reactive({
     page: 1,
@@ -103,12 +103,12 @@ const tableData = ({
 })
 
 const getListData = () => {
-    accountRead(paginationData).then(({ data }) => {
-        console.log(data, 'accountRead')
-        const { budgets, total } = data.data
-        tableData.list = budgets
-        tableData.total = total
-    })
+    // accountRead(paginationData).then(({ data }) => {
+    //     console.log(data, 'accountRead')
+    //     const { budgets, total } = data.data
+    //     tableData.list = budgets
+    //     tableData.total = total
+    // })
 }
 
 

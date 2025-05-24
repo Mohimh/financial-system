@@ -8,7 +8,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { assetRead } from '@/api';
+// import { assetRead } from '@/api';
 
 
 const paginationData = reactive({
@@ -17,12 +17,12 @@ const paginationData = reactive({
 })
 
 const getListData = () => {
-    assetRead(paginationData).then(({ data }) => {
-        console.log(data, 'assetRead')
-        // const { stuffs, total } = data.data
-        // tableData.list = stuffs
-        // tableData.total = total
-    })
+    // assetRead(paginationData).then(({ data }) => {
+    //     console.log(data, 'assetRead')
+    //     const { stuffs, total } = data.data
+    //     tableData.list = stuffs
+    //     tableData.total = total
+    // })
 }
 
 </script>

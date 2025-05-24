@@ -6,9 +6,9 @@
             <el-col :span="7" class="flex-box">
                 <el-upload
                     ref="uploadRef"
-                    show-file-list="false"
+                    :show-file-list="false"
                     :auto-upload="true"
-                    action="http://localhost:8000/api/v1/user/update/${id}"
+                    action='http://localhost:8000/api/v1/user/avatar/3'
                     :headers="{'x-token': token}"
                     :on-success="uploadSuccess"
                 >
@@ -18,10 +18,10 @@
                     <span>选择本地图片</span>
                 </div>
                 <el-divider border-style="dashed" />
-                <el-button @click="updataAvatar">
+                <!-- <el-button @click="updataAvatar">
                     <el-icon><Picture /></el-icon>
                     <span>上传图片</span>
-                </el-button>
+                </el-button> -->
             </el-col>
             <el-col :span="7">
                 <div class="origin-avatar flex-box">
@@ -42,16 +42,26 @@
 <script setup>
 import { ref } from 'vue'
 import { Picture } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 const token = localStorage.getItem('fs_token')
 const user = JSON.parse(localStorage.getItem('fs_user'))
 
 const uploadRef = ref()
 
-const originAvatar = ref(user.headerImg)
+const originAvatar = ref(user.avatar)
+const newAvatar = ref()
 
 const uploadSuccess = (result) => {
-    originAvatar.value = result.data
+    if ( result.code === 0 ) {
+        user.avatar = result.data.avatar
+        ElMessage.success(result.msg)
+        localStorage.setItem('fs_user', JSON.stringify(user))
+        location.reload()
+    } 
+    else {
+        ElMessage.warning(result.msg)
+    }
 }
 
 </script>

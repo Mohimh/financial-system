@@ -5,13 +5,13 @@
             <h1>个人基本信息</h1>
               <el-divider border-style="dashed" />
             <el-form-item label="头像" style="align-items: center;">
-                <div class="avatar-box" @click="avatarClick" >
-                    <el-avatar 
-                        :src="form.headerImg" 
-                        :size="75" 
-                        class="avatar" 
-                    />
-                </div>
+                    <div class="avatar-box" @click="avatarClick" >
+                        <el-avatar 
+                            :src="form.avatar" 
+                            :size="75" 
+                            class="avatar" 
+                        />
+                    </div>
             </el-form-item>
             <el-form-item label="用户名">
                 <el-input v-model="form.username" @change="handleInputChange"></el-input>
@@ -85,6 +85,7 @@ const SEXOPTIONS = [
 onMounted(() => {
     Object.assign(form, user)
     form.created_at = dayjs(form.created_at).format('YYYY-MM-DD')
+    
 })
 
 // 跟踪表单是否被修改

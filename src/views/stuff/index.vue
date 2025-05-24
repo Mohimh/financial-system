@@ -78,6 +78,9 @@
                 :model="form"
                 :rules="rules"
             >
+                <el-form-item prop="job_number">
+
+                </el-form-item>
                 <el-form-item prop="department" label="部门">
                         <el-select
                             v-model="form.department"
@@ -164,7 +167,8 @@ const DEPARTMENT_OPTIONS = [
 
 // 表单字段
 const form = reactive({
-    department: '',
+    job_number: '',
+    department_id: '',
     account: '',
     name: '',
     gender: null,

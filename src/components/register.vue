@@ -257,7 +257,6 @@ const submitForm = async(formEl) => {
     // 手动触发校验
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log(registerForm)
             register(registerForm).then(({ data }) => {
                 if(data.code === 0) {
                     ElMessage.success('注册成功！')

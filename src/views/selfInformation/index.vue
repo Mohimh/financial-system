@@ -34,23 +34,28 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, watch, ref, reactive, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
 const router = useRouter()
+const route = useRoute()
 const store = useStore()
+
 // 侧边栏
 const listData = computed(() => store.state.selfInformation.routerList)
 const activeIndex = computed(() => store.state.selfInformation.activeIndex)
-console.log('activeIndex', activeIndex.value)
-console.log('listData', listData.value)
+
+onMounted(() => {
+  const index = listData.value.findIndex(item => item.meta.path === route.path) + 1
+  store.commit('updateInformationActive', `${index}`)
+})
+
 const handleClick = (item, activeIndex) => {
   store.commit('updateInformationActive', activeIndex); // 提交组合 index
   console.log('activeIndex', activeIndex)
   router.push(item.meta.path);
 }
-
 
 const handleOpen = () => {}
 const handleClose = () => {}
