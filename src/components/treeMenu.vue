@@ -39,7 +39,6 @@ const props = defineProps(['index', 'menuData'])
 const handleClick = (item, activeIndex) => {
     store.commit('addMenu', item.meta);
     store.commit("updateMenuActive", activeIndex);
-
     router.push(item.meta.path);
 }
 

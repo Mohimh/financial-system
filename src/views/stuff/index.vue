@@ -6,21 +6,20 @@
             新增
         </el-button>
         <el-table :data="tableData.list" border stripe style="width: auto">
-            <el-table-column prop="department" label="部门" width="75px"/>
-            <el-table-column prop="account" label="账号" width="80px"/>
-            <el-table-column prop="name" label="姓名" width="80px"/>
-            <el-table-column label="性别" width="75px">
+            <el-table-column prop="department_name" label="部门" width="75px"/>
+            <!-- 需要但尚未获取 -->
+            <!-- <el-table-column prop="name" label="姓名" width="80px"/> -->
+            <!-- <el-table-column label="性别" width="75px">
                 <template #default="scoped">  
                     <el-tag type="success">
                         {{ scoped.row.gender === 0 ? '男' : '女' }}
                     </el-tag>
                 </template>
-            </el-table-column>
-            <el-table-column prop="birth" label="生日"/>
-            <el-table-column prop="tel" label="电话"/>
+            </el-table-column> -->
+            <el-table-column prop="emerg_phone" label="电话"/>
             <el-table-column prop="email" label="邮箱" width="150px"/>
-            <el-table-column prop="entry" label="入职时间"/>
-            <el-table-column prop="address" label="地址"/>
+            <el-table-column prop="entry_date" label="入职时间"/>
+            <el-table-column prop="position" label="地址"/>
             <el-table-column prop="state" label="状态">
                 <template #default="scoped">
                     <el-switch
@@ -63,10 +62,21 @@
             title="员工添加"
             width="500"
         >
-            <el-form :inline="true">
+            <!-- 未就职员工筛选 -->
+            <el-form :inline="true" label-width="100px" label-position="left">
                 <el-form-item label="闲置员工">
-                    <el-select v-model="query.name" style="width: 200px;" placeholder="">
-                        <el-option v-for="item in subjectList" :key="item.id" :label="item.name" :value="item.id" />
+                    <el-select 
+                        v-model="query.id" 
+                        style="width: 200px;" 
+                        placeholder="在此处选择闲置员工"
+                        @change="handleUserSelect"
+                    >
+                        <el-option 
+                            v-for="item in nonUserData.list" 
+                            :key="item.id" 
+                            :label="item.real_name" 
+                            :value="item.id" 
+                        />
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -78,58 +88,43 @@
                 :model="form"
                 :rules="rules"
             >
-                <el-form-item prop="job_number">
-
-                </el-form-item>
-                <el-form-item prop="department" label="部门">
+                <el-form-item prop="department_id" label="部门">
                         <el-select
-                            v-model="form.department"
+                            v-model="form.department_id"
                             placeholder="请选择部门"
                             size="default"
                         >
                             <el-option
-                                v-for="item in DEPARTMENT_OPTIONS"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
+                                v-for="item in DEPARTMENT_OPTIONS.list"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id"
                             />
                         </el-select>
                 </el-form-item>
-                <el-form-item prop="account" label="账号">
-                    <el-input v-model="form.account" placeholder="请输入员工账号"/>
+                <el-form-item prop="real_name" label="姓名">
+                    <el-input v-model="query.real_name" placeholder="请输入员工姓名" disabled />
                 </el-form-item>
-                <el-form-item prop="name" label="姓名">
-                    <el-input v-model="form.name" placeholder="请输入员工姓名" />
-                </el-form-item>
-                <el-form-item prop="gender" label="性别">
+                <el-form-item prop="sex" label="性别">
                     <el-switch
-                        v-model="form.gender"
+                        v-model="query.sex"
+                        disabled
                         inline-prompt
                         style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-                        :active-value="0"
-                        :inactive-value="1"
+                        active-value="男"
+                        inactive-value="女"
                         active-text="男"
                         inactive-text="女"
                     />
                 </el-form-item>
-                <el-form-item prop="tel" label="电话">
-                    <el-input v-model="form.tel" placeholder="请输入手机号" />
+                <el-form-item prop="emerg_phone" label="电话">
+                    <el-input v-model="form.emerg_phone" placeholder="请输入手机号" />
                 </el-form-item>
                 <el-form-item prop="email" label="邮箱">
-                    <el-input v-model="form.email" placeholder="请输入邮箱" />
+                    <el-input v-model="query.email" placeholder="请输入邮箱" disabled />
                 </el-form-item>
-                <el-form-item prop="entry" label="入职时间">
-                    <el-date-picker
-                        v-model="form.entry"
-                        type="date"
-                        placeholder="选择入职时间"
-                    />
-                </el-form-item>
-                <el-form-item prop="address" label="地址">
-                    <el-input v-model="form.address" placeholder="请填写地址"/>
-                </el-form-item>
-                <el-form-item prop="enter" label="录入时间">
-                    <el-input v-model="form.enter" disabled/>
+                <el-form-item prop="position" label="地址">
+                    <el-input v-model="form.position" placeholder="请填写地址"/>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -144,75 +139,133 @@
 </template>
 
 <script setup>
-import { ref, reactive, nextTick, onMounted } from 'vue'
+import { ref, reactive, nextTick, onMounted, watch } from 'vue'
 import { stuffList, stuffCreate, nonEmployeeList } from '@/api'
+import { departmentList } from '@/api'
+import { ElMessage } from 'element-plus'
 
 // 员工分页
 const stuffPaginationData = reactive({
     page: 1,
-    page_size: 10
+    page_size: 5,
 })
-
-// 测试数据
-const tableData = reactive({
-    list: [],
-    total: 0
-})
-
-// 部门选项
-const DEPARTMENT_OPTIONS = [
-  { label: '研发部', value: '研发部' },
-  { label: '人事部', value: '人事部' }, 
-]
-
-// 表单字段
-const form = reactive({
-    job_number: '',
-    department_id: '',
-    account: '',
-    name: '',
-    gender: null,
-    tel: '',
-    email: '',
-    entry: '',
-    address: '',
-    enter: '',
-})
-const formRef = ref()
 
 // 员工筛选项
 const query = reactive({
     id: '',
-    name: '',
+    real_name: '',
+    sex: '男',
+    phone: '',
+    email: '',
 })
 
+// 表单字段
+const form = reactive({
+    department_id: '',
+    emerg_phone: '',
+    position: '',
+})
+const formRef = ref()
+
+// 表格数据
+const tableData = reactive({
+    list: [],
+    total: 0,
+})
+
+// 员工列表
+const stuffData = reactive({
+    list: [],
+    total: 0,
+})
+
+// 未入职人员名单
 const nonUserData = reactive({
     list: [],
-    total: 0
+    total: 0,
 })
 
+// 部门名单
+const DEPARTMENT_OPTIONS = reactive({
+    list: [],
+    total: 0,
+})
+
+// 页面初始
 onMounted(() => {
     getListData()
     getNonuserData()
+    getDepartmentData()
+    console.log('query:', query)
 })
 
-// 请求列表
+// 请求员工列表
 const getListData = () => {
     stuffList(stuffPaginationData).then(({ data }) => {
-        const { stuffs, total } = data.data
-        tableData.list = stuffs
-        tableData.total = total
+        if (data.code === 0) {
+            const { stuffs, total } = data.data
+            stuffData.list = stuffs
+            stuffData.total = total
+            ElMessage.success('获取员工列表成功')
+            console.log('员工列表:', stuffData)
+        }
+        else {
+            ElMessage.warning('获取员工列表失败')
+        }
     })
 }
 
+// 请求未入职人员列表
 const getNonuserData = () => {
     nonEmployeeList().then(({ data }) => {
-        const { users, total } = data.data
-        nonUserData.list = users
-        nonUserData.total = total
+        if (data.code === 0) {
+            nonUserData.list.splice(0, nonUserData.list.length)
+            nonUserData.total = 0
+            const { users, total } = data.data
+            users.forEach(item => {
+                if (item.real_name) {
+                    nonUserData.list.push(item)
+                    nonUserData.total += 1
+                }
+            });
+            ElMessage.success('获取未入职人员列表成功')
+            console.log('未入职人员列表:', nonUserData)
+        }
+        else {
+            // ElMessage.warning('获取未入职人员列表失败')
+        }
     })
 }
 
+// 请求部门列表
+const getDepartmentData = () => {
+    departmentList().then(({ data }) => {
+        if (data.code === 0) {
+            const { list, total } = data.data
+            DEPARTMENT_OPTIONS.list = list
+            DEPARTMENT_OPTIONS.total = total
+            ElMessage.success('获取部门列表请求成功')
+            console.log('部门信息:', DEPARTMENT_OPTIONS)
+        }
+        else {
+            ElMessage.success('获取部门列表请求失败')
+        }
+    })
+}
+
+// 选择未就业员工逻辑
+const handleUserSelect = (id) => {
+    try {
+    const stuff = nonUserData.list.find((item) => item.id === id)
+    if (stuff) {
+        Object.assign(query, stuff)
+    }
+    } catch (error) {
+        console.error('获取用户信息失败:', error);
+    }
+}
+
+// 表单打开逻辑
 const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
@@ -224,37 +277,55 @@ const open = (rowData = {}) => {
     })
 } 
 
+// 编辑表单
 const edit = (rowData) => {
     dialogFormVisable.value = true
     open(rowData)
 }
 
+// 删除表单
 const cancel = (rowData) => {
 
 }
 
+// 弹框是否可视
 const dialogFormVisable = ref(false)
 
+// 关闭弹框
 const beforeClose = () => {
     dialogFormVisable.value = false
     formRef.value.resetFields()
+    Object.keys(query).forEach(key => delete query[key])
+    query.sex = '男'
 }
 
+// 表单校验逻辑
 const rules = reactive({
-    department: [{ required: true}],
-    account: [{ required: true, trigger: 'blur'}],
-    name: [{ required: true, trigger: 'blur', message: '请填写姓名'}],
-    gender: [{ required: true}],
-    tel: [{ required: true, trigger: 'blur', message: '请填写电话'}],
-    email: [{ required: true, trigger: 'blur', message: '请填写邮箱'}],
-    address: [{ required: true, trigger: 'blur', message: '请填写地址'}]
+    department_id: [{ required: true }],
 })
 
+// 表单提交逻辑
 const confirm = async (formEl) => {
     if (!formEl) return
-    
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            stuffCreate(form).then(({ data }) => {
+                if (data.code === 0) {
+                    ElMessage.success('表单提交成功成功')
+                    beforeClose()
+                    getListData()
+                } else {
+                    ElMessage.warning('表单提交错误')
+                }
+            })
+        }
+        else {
+            console.log('Error submit', fields)
+        }
+    })
 }
 
+// 员工列表分页切换
 const handleSizeChange = (val) => {
     stuffPaginationData.page_size = val
     getListData()

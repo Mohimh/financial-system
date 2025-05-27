@@ -10,9 +10,9 @@ export const updatePassword = (id, data) => {
     return request.put(`/user/updatePassword/${id}`, data)
 }
 
-// 上传头像
+// 修改头像
 export const updateAvatar = (data) => {
-    return request.post(`/user/avatar/${id}`, data)
+    return request.post('/user/avatar', data)
 }
 
 // 重置密码

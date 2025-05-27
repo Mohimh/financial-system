@@ -8,7 +8,9 @@
                     ref="uploadRef"
                     :show-file-list="false"
                     :auto-upload="true"
-                    action='http://localhost:8000/api/v1/user/avatar/3'
+                    action='http://localhost:8000/api/v1/user/avatar'
+                    method="post"
+                    :data="{ id: user.id }"
                     :headers="{'x-token': token}"
                     :on-success="uploadSuccess"
                 >

@@ -36,7 +36,7 @@
                         :prefix-icon="Lock"
                     >
                         <template #append>
-                            <el-button :icon="passwordMode === false ? Hide : View" @click="passwordModeChange" />
+                            <el-button class="password-visable" :icon="passwordMode === false ? Hide : View" @click="passwordModeChange" />
                         </template>
                     </el-input>
                 </el-form-item>
@@ -63,7 +63,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="captcha">
-                    <el-input v-model="registerForm.captcha" placeholder="请输入6位验证码">
+                    <el-input class="form-captcha" v-model="registerForm.captcha" placeholder="请输入6位验证码">
                         <template #append>
                             <span @click="countdownChange">{{ countdown.validText }}</span>
                         </template>
@@ -208,7 +208,7 @@ const countdownChange = () => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
     // 邮箱校验
-    if (registerForm.email === 'value') {
+    if (registerForm.email === '') {
         return ElMessage({
             message: '请完整填写您的邮箱信息',
             type: 'warning',
@@ -327,6 +327,9 @@ const submitForm = async(formEl) => {
                     margin-left: 10px;
                 }
             }
+        }
+        .form-captcha {
+            cursor: pointer;
         }
 
         // 回到登录界面按钮

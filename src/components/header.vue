@@ -6,7 +6,7 @@
             <div class="top-right">
                 <el-dropdown @command=handleClick>
                     <div class="el-dropdown-link flex-box">
-                        <el-avatar :size="60" :src="user.avatar" />
+                        <el-avatar :size="50" :src="user.avatar" />
                     </div>
                     <template #dropdown>
                         <el-dropdown-item command="infomation">
@@ -78,6 +78,7 @@ const homeClick = () => {
     router.push('/home')
 }
 
+// 点击导航栏
 const pageClick = (path) => {
     store.commit('clickHeaderMenu', path)
     activePath.value = path

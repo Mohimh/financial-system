@@ -39,7 +39,7 @@
             <el-pagination
                 v-model:current-page="paginationData.page"
                 v-model:page-size="paginationData.page_size"
-                :page-sizes="[1, 5, 10]"
+                :page-sizes="[5, 10]"
                 size="small"
                 :background="false"
                 layout="total, sizes, prev, pager, next, jumper"
@@ -130,15 +130,19 @@ onMounted(() => {
 // 请求列表
 const getListData = () => {
     departmentList(paginationData).then(({ data }) => {
-        const { list, total } = data.data
-        tableData.list = list
-        tableData.total = total
-        try{
-            tableData.list.forEach(item => {
-                item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD')
-            });
-        } catch {
-            console.log('暂无无部门')
+        if (data.code === 0) {
+            const { list, total } = data.data
+            tableData.list = list
+            tableData.total = total
+            try{
+                tableData.list.forEach(item => {
+                    item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD')
+                });
+            } catch {
+                console.log('暂无无部门')
+                // 此处可添加无部门时部门编码问题
+            }
+            console.log('部门列表:', tableData)
         }
     })
 }
@@ -197,24 +201,27 @@ const form = reactive({
     createdAt: '',
 })
 
+// 表单提交逻辑
 const confirm = async (formEl) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
+            // 添加部门
             if (departmentTitle.value === '添加部门') {
                 departmentCreate(form).then(({ data }) => {
                     if (data.code === 0) {
-                        ElMessage.success('成功')
+                        ElMessage.success('提交成功')
                         beforeClose()
                         getListData()
                     }
                 })
             }
+            // 编辑部门信息
             else {
-                console.log(form.id)
+                console.log('被编辑的部门id为:', form.id)
                 departmentUpdate(form.id, form).then(({ data }) => {
                     if (data.code === 0) {
-                        ElMessage.success('成功')
+                        ElMessage.success('编辑成功')
                         beforeClose()
                         getListData()
                     }
