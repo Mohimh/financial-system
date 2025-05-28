@@ -5,31 +5,33 @@
             <el-icon><CirclePlus/></el-icon>
             新增
         </el-button>
-        <el-table :data="tableData.list" border stripe style="width: auto">
+        <el-table :data="stuffData.list" border stripe style="width: auto">
             <el-table-column prop="department_name" label="部门" width="75px"/>
+            <el-table-column prop="real_name" label="姓名" width="100px"/>
             <!-- 需要但尚未获取 -->
-            <!-- <el-table-column prop="name" label="姓名" width="80px"/> -->
-            <!-- <el-table-column label="性别" width="75px">
+            <el-table-column label="性别" width="75px">
                 <template #default="scoped">  
                     <el-tag type="success">
-                        {{ scoped.row.gender === 0 ? '男' : '女' }}
+                        {{ scoped.row.sex === '男' ? '男' : '女' }}
                     </el-tag>
                 </template>
-            </el-table-column> -->
-            <el-table-column prop="emerg_phone" label="电话"/>
-            <el-table-column prop="email" label="邮箱" width="150px"/>
-            <el-table-column prop="entry_date" label="入职时间"/>
+            </el-table-column>
+            <el-table-column prop="phone" label="电话"/>
+            <el-table-column prop="email" label="邮箱"/>
+            <el-table-column prop="create_time" label="入职时间"/>
             <el-table-column prop="position" label="地址"/>
-            <el-table-column prop="state" label="状态">
-                <template #default="scoped">
+            <el-table-column prop="status" label="状态">
+                <template #default="{ row }">
                     <el-switch
-                        v-model="scoped.row.state"
+                        v-model="row.status"
                         disabled
-                        :style="scoped.row.state === true ? '--el-switch-on-color: #13ce66' : '--el-switch-off-color: #ff4949'"
+                        :active-value=1
+                        :inactive-value=2
+                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
                     />
                 </template>
             </el-table-column>
-            <el-table-column prop="enter" label="录入时间" width="175px"/>
+            <!-- <el-table-column prop="enter" label="录入时间" width="175px"/> -->
             <el-table-column label="操作">
                 <template #default="{row}">
                     <el-link :underline="false" type="primary" @click="edit(row)">
@@ -51,7 +53,7 @@
                 size="small"
                 :background="false"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="tableData.total"
+                :total="stuffData.total"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
             />
@@ -140,7 +142,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted, watch } from 'vue'
-import { stuffList, stuffCreate, nonEmployeeList } from '@/api'
+import { stuffList, stuffCreate, nonEmployeeList, stuffDel, userList } from '@/api'
 import { departmentList } from '@/api'
 import { ElMessage } from 'element-plus'
 
@@ -152,7 +154,8 @@ const stuffPaginationData = reactive({
 
 // 员工筛选项
 const query = reactive({
-    id: '',
+    id: null,
+    job_number: '',
     real_name: '',
     sex: '男',
     phone: '',
@@ -161,17 +164,12 @@ const query = reactive({
 
 // 表单字段
 const form = reactive({
+    user_id: null,
     department_id: '',
     emerg_phone: '',
     position: '',
 })
 const formRef = ref()
-
-// 表格数据
-const tableData = reactive({
-    list: [],
-    total: 0,
-})
 
 // 员工列表
 const stuffData = reactive({
@@ -193,14 +191,14 @@ const DEPARTMENT_OPTIONS = reactive({
 
 // 页面初始
 onMounted(() => {
-    getListData()
+    getStuffData()
     getNonuserData()
     getDepartmentData()
     console.log('query:', query)
 })
 
 // 请求员工列表
-const getListData = () => {
+const getStuffData = () => {
     stuffList(stuffPaginationData).then(({ data }) => {
         if (data.code === 0) {
             const { stuffs, total } = data.data
@@ -221,7 +219,7 @@ const getNonuserData = () => {
         if (data.code === 0) {
             nonUserData.list.splice(0, nonUserData.list.length)
             nonUserData.total = 0
-            const { users, total } = data.data
+            const { users } = data.data
             users.forEach(item => {
                 if (item.real_name) {
                     nonUserData.list.push(item)
@@ -232,7 +230,7 @@ const getNonuserData = () => {
             console.log('未入职人员列表:', nonUserData)
         }
         else {
-            // ElMessage.warning('获取未入职人员列表失败')
+            console.log('获取未入职人员列表失败');   
         }
     })
 }
@@ -309,6 +307,9 @@ const confirm = async (formEl) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
+            form.job_number = `00${query.id}`
+            form.user_id = query.id
+            console.log('form:', form)
             stuffCreate(form).then(({ data }) => {
                 if (data.code === 0) {
                     ElMessage.success('表单提交成功成功')

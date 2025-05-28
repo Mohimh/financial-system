@@ -71,7 +71,7 @@
                 </el-form-item>
                 <el-checkbox v-model="checkboxButton" size="small">点击开始体验财务管理系统</el-checkbox>
                 <el-form-item>
-                    <el-button type="primary" class="register-button" @click="submitForm(registerFormRef)">
+                    <el-button type="primary" class="register-button" @click="dialogFormVisible = true">
                         开始体验
                     </el-button>
                 </el-form-item>
@@ -80,6 +80,34 @@
                     <el-link type="primary" :underline="false" @click="changeForm">立即登录</el-link>
                 </el-text>
             </el-form>
+
+            <el-dialog v-model="dialogFormVisible" title="请填写详情信息" width="500">
+                <el-form :model="registerForm" ref="registerFormRef" label-width="auto">
+                    <el-form-item prop="real_name" label="真实姓名">
+                        <el-input v-model="registerForm.real_name" placeholder="请填写真实姓名" />
+                    </el-form-item>
+                    <el-form-item prop="sex" label="性别">
+                        <el-select v-model="registerForm.sex" placeholder="请选择性别">
+                            <el-option label="男" value="男" />
+                            <el-option label="女" value="女" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item prop="phone" label="电话">
+                        <el-input v-model="registerForm.phone" placeholder="请填写电话" />
+                    </el-form-item>
+                    <el-form-item prop="position" label="地址">
+                        <el-input v-model="registerForm.position" type="textarea" placeholder="请填写地址" :rows="4" />
+                    </el-form-item>
+                </el-form>
+                <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取消</el-button>
+                    <el-button type="primary" @click="submitForm(registerFormRef)">
+                    提交
+                    </el-button>
+                </div>
+                </template>
+            </el-dialog>
         </el-card>
     </el-row>
 
@@ -108,12 +136,16 @@ const registerForm = reactive({
     passWord: '',
     email: '',
     captcha: '', 
+    real_name: '',
+    phone: '',
 })
 
 const emailRegisterForm = reactive({
     target: '',
     vType: 'email',
 })
+
+const dialogFormVisible = ref(false)
 
 // 密码可见度(false不可见，true可见)
 const passwordMode = ref(false)
@@ -189,11 +221,19 @@ const validateCode = (rule, value, callback) => {
     }
 }
 
+const validateRealName = (rule, value, callback) => {
+    // 验证码不为空
+    if (value === '') {
+        callback(new Error('请输入真实姓名'))
+    }
+}
 const rules = reactive({
     userName: [{ validator: validateName, trigger: 'blur' }],
     passWord: [{ validator: validatePass, trigger: 'blur' }],
     email: [{ validator: validateEmail, trigger: 'blur' }],
-    captcha: [{ validator: validateCode, trigger: 'blur' }]
+    captcha: [{ validator: validateCode, trigger: 'blur' }],
+    real_name: [{ validator: validateRealName, trigger: 'blur', required: true }],
+    // sex: [{ validator: validateSex, trigger: 'blur' }],
 })
 
 // 倒计时按钮
@@ -221,6 +261,18 @@ const countdownChange = () => {
         })
     }
 
+     // 发送验证码
+    emailRegisterForm.target = registerForm.email
+    getCode(emailRegisterForm).then(({ data }) => {
+        console.log(data, 'data')
+        if (data.code === 0) {
+            ElMessage.success('发送成功')
+        } 
+        else {
+            ElMessage.warning(data.msg)
+        }
+    })
+
     // 设置验证码倒计时时间
     const time = setInterval(() => {
         if (countdown.time <= 0) {
@@ -235,15 +287,6 @@ const countdownChange = () => {
     }, 1000);
     // 设置验证码状态（不可点击）
     flag = true
-
-    // 发送验证码
-    emailRegisterForm.target = registerForm.email
-    getCode(emailRegisterForm).then(({ data }) => {
-        console.log(data, 'data')
-        if (data.code === 0) {
-            ElMessage.success('发送成功')
-        }
-    })
 }
 
 const router = useRouter()
@@ -257,6 +300,7 @@ const submitForm = async(formEl) => {
     // 手动触发校验
     await formEl.validate((valid, fields) => {
         if (valid) {
+            
             register(registerForm).then(({ data }) => {
                 if(data.code === 0) {
                     ElMessage.success('注册成功！')

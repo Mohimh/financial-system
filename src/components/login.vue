@@ -288,6 +288,14 @@ const countdownChange = () => {
         })
     }
 
+    // 发送验证码
+    getCode({ target: emailLoginForm.email, vType: 'email' }).then(({ data }) => {
+        console.log(data, 'data')
+        if (data.code === 0) {
+            ElMessage.success('发送成功')
+        }
+    })
+
     // 设置验证码倒计时时间
     const time = setInterval(() => {
         if (countdown.time <= 0) {
@@ -302,14 +310,6 @@ const countdownChange = () => {
     }, 1000);
     // 设置验证码状态（不可点击）
     flag = true
-
-    // 发送验证码
-    getCode({ target: emailLoginForm.email, vType: 'email' }).then(({ data }) => {
-        console.log(data, 'data')
-        if (data.code === 0) {
-            ElMessage.success('发送成功')
-        }
-    })
 }
 
 const router = useRouter()

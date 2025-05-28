@@ -2,6 +2,7 @@ import SelfInformation from '@/views/selfInformation/index.vue'
 import PersonalInformation from '@/views/selfInformation/personalInformation/index.vue'
 import ChangeKey from '@/views/selfInformation/changeKey/index.vue'
 import ChangeAvatar from '@/views/selfInformation/changeAvatar/index.vue'
+import InfDetail from '@/views/selfInformation/infDetail/index.vue'
 
 export default {
 path: '/selfInformation',
@@ -22,7 +23,11 @@ children: [
     path: 'changeAvatar',
     meta: { id: '3', name: '修改头像', path: '/selfInformation/changeAvatar' },
     component: ChangeAvatar
-
-    }
+    },
+    {
+    path: 'infDetail',
+    meta: { id: '4', name: '信息补全', path: '/selfInformation/infDetail' },
+    component: InfDetail
+    },
 ]
 }

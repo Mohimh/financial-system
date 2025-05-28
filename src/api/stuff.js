@@ -10,12 +10,17 @@ export const nonEmployeeList = () => {
     return request.get('/user/nonEmployeeList')
 }
 
+// 获取用户详情列表
+export const userList = (id) => {
+    return request.get(`/user/${id}`)
+}
+
 // 创建员工
 export const stuffCreate = (data) => {
     return request.post('/stuff', data)
 }
 
 // 删除员工
-// export const stuffDel = () => {
-//     return request.delete('/stuff/{id}')
-// }
+export const stuffDel = (id) => {
+    return request.delete(`/stuff/${id}`)
+}
