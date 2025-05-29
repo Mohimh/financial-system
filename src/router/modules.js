@@ -4,9 +4,12 @@ import Department from '@/views/department/index.vue'
 import Stuff from '@/views/stuff/index.vue'
 import Salary from '@/views/salary/index.vue'
 
+
+import AccountSub from '@/views/accounting/accountSub/index.vue'
+import Account from '@/views/accounting/account/index.vue'
+import FundTransaction from '@/views/accounting/fundTransaction/index.vue'
 import VoucherEntry from '@/views/accounting/voucherEntry/index.vue'
 import GeneralLedger from '@/views/accounting/generalLedger/index.vue'
-import AccountManage from '@/views/accounting/accountManage/index.vue'
 
 import PlanEdit from '@/views/budget/planEdit/index.vue'
 import ExecMonitor from '@/views/budget/execMonitor/index.vue'
@@ -64,19 +67,29 @@ children: [
     meta: { id: '5', name: '会计核算' },
     children: [
         {
+        path: 'accountSub',
+        meta: { id: '1', name: '会计科目管理', path: '/accounting/accountSub' },
+        component: AccountSub
+        },
+        {
+        path: 'account',
+        meta: { id: '2', name: '账户管理', path: '/accounting/account' },
+        component: Account
+        },
+        {
+        path: 'fundTransaction',
+        meta: { id: '3', name: '资金流水管理', path: '/accounting/fundTransaction' },
+        component: FundTransaction
+        },
+        {
         path: 'voucherEntry',
-        meta: { id: '1', name: '会计凭证录入与查询', path: '/accounting/voucherEntry' },
+        meta: { id: '4', name: '会计凭证管理', path: '/accounting/voucherEntry' },
         component: VoucherEntry
         },
         {
         path: 'generalLedger',
-        meta: { id: '2', name: '总账/明细账查询', path: '/accounting/generalLedger' },
+        meta: { id: '5', name: '总账/明细账查询', path: '/accounting/generalLedger' },
         component: GeneralLedger
-        },
-        {
-        path: 'accountManage',
-        meta: { id: '3', name: '会计科目管理', path: '/accounting/accountManage' },
-        component: AccountManage
         },
     ]
     },

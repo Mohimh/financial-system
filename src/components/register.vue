@@ -19,14 +19,10 @@
                 :model="registerForm" 
                 style="max-width: 480px" 
                 class="ruleForm"
-                :rules="rules"
+                :rules="formRules"
             >
                 <el-form-item prop="userName">
-                    <el-input 
-                        v-model="registerForm.userName" 
-                        placeholder="请设置用户名，4-10个字符" 
-                        :prefix-icon="UserFilled"
-                    />
+                    <el-input v-model="registerForm.userName" placeholder="请设置用户名，4-10个字符" :prefix-icon="UserFilled"/>
                 </el-form-item>
                 <el-form-item prop="passWord">
                     <el-input 
@@ -41,11 +37,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="email">
-                    <el-input 
-                        v-model="registerForm.email" 
-                        placeholder="请输入邮箱" 
-                        :prefix-icon="Message"
-                    >
+                    <el-input v-model="registerForm.email" placeholder="请输入邮箱" :prefix-icon="Message">
                         <template #append>
                             <el-select 
                                 v-model="suffix" 
@@ -71,7 +63,7 @@
                 </el-form-item>
                 <el-checkbox v-model="checkboxButton" size="small">点击开始体验财务管理系统</el-checkbox>
                 <el-form-item>
-                    <el-button type="primary" class="register-button" @click="dialogFormVisible = true">
+                    <el-button type="primary" class="register-button" @click="submitForm(registerFormRef)">
                         开始体验
                     </el-button>
                 </el-form-item>
@@ -80,34 +72,6 @@
                     <el-link type="primary" :underline="false" @click="changeForm">立即登录</el-link>
                 </el-text>
             </el-form>
-
-            <el-dialog v-model="dialogFormVisible" title="请填写详情信息" width="500">
-                <el-form :model="registerForm" ref="registerFormRef" label-width="auto">
-                    <el-form-item prop="real_name" label="真实姓名">
-                        <el-input v-model="registerForm.real_name" placeholder="请填写真实姓名" />
-                    </el-form-item>
-                    <el-form-item prop="sex" label="性别">
-                        <el-select v-model="registerForm.sex" placeholder="请选择性别">
-                            <el-option label="男" value="男" />
-                            <el-option label="女" value="女" />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item prop="phone" label="电话">
-                        <el-input v-model="registerForm.phone" placeholder="请填写电话" />
-                    </el-form-item>
-                    <el-form-item prop="position" label="地址">
-                        <el-input v-model="registerForm.position" type="textarea" placeholder="请填写地址" :rows="4" />
-                    </el-form-item>
-                </el-form>
-                <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">取消</el-button>
-                    <el-button type="primary" @click="submitForm(registerFormRef)">
-                    提交
-                    </el-button>
-                </div>
-                </template>
-            </el-dialog>
         </el-card>
     </el-row>
 
@@ -116,7 +80,6 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { UserFilled, Lock, Hide, View, Message } from '@element-plus/icons-vue'
-// import { getCode, userAuthentication, login, menuPermissions } from '../../api'
 import { getCode, register } from '@/api'
 import { ElCheckboxButton, ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
@@ -221,19 +184,12 @@ const validateCode = (rule, value, callback) => {
     }
 }
 
-const validateRealName = (rule, value, callback) => {
-    // 验证码不为空
-    if (value === '') {
-        callback(new Error('请输入真实姓名'))
-    }
-}
-const rules = reactive({
+// 验证
+const formRules = reactive({
     userName: [{ validator: validateName, trigger: 'blur' }],
     passWord: [{ validator: validatePass, trigger: 'blur' }],
     email: [{ validator: validateEmail, trigger: 'blur' }],
     captcha: [{ validator: validateCode, trigger: 'blur' }],
-    real_name: [{ validator: validateRealName, trigger: 'blur', required: true }],
-    // sex: [{ validator: validateSex, trigger: 'blur' }],
 })
 
 // 倒计时按钮
@@ -242,9 +198,15 @@ const countdown = reactive({
     time: 60
 })
 
+// 关闭
+const beforeClose = () => {
+    dialogFormVisible.value = false
+    registerDialogRef.value.resetFields()
+}
+
 // 验证码
 let flag = false
-const countdownChange = () => {
+const countdownChange = async () => {
     // 验证码在规定时间只能被点击1次
     if (flag) return
     // 邮箱校验
@@ -291,16 +253,14 @@ const countdownChange = () => {
 
 const router = useRouter()
 const registerFormRef = ref()
-
-// const routerList = computed(() => store.state.menu.routerList)
+const registerDialogRef = ref()
 
 // 表单提交 
-const submitForm = async(formEl) => {
+const submitForm = async (formEl) => {
     if (!formEl) return
     // 手动触发校验
     await formEl.validate((valid, fields) => {
         if (valid) {
-            
             register(registerForm).then(({ data }) => {
                 if(data.code === 0) {
                     ElMessage.success('注册成功！')
@@ -309,14 +269,6 @@ const submitForm = async(formEl) => {
                     localStorage.setItem('fs_token', data.data.token)
                     localStorage.setItem('fs_user', JSON.stringify(data.data.user))
                     router.push('/home')
-                    // menuPermissions().then(({ data }) => {
-                    //     store.commit('dynamicMenu', data.data)
-                    //     console.log(routerList, 'routerList')
-                    //     toRaw(routerList.value).forEach(item => {
-                    //         router.addRoute('main', item)  
-                    //     })
-                    //     router.push('/')
-                    // })
                 }
             })
         } else {

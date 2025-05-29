@@ -51,7 +51,7 @@
         <el-dialog
             v-model="dialogFormVisable"
             :before-close="beforeClose"
-            :title="departmentTitle"
+            :title="dialogTitle"
             width="400"
         >
             <el-form
@@ -78,7 +78,7 @@
                         placeholder="请填写备注"
                     />
                 </el-form-item>
-                 <el-form-item prop="status" label="部门状态">
+                <el-form-item prop="status" label="部门状态">
                     <el-switch
                         v-model="form.status"
                         inline-prompt
@@ -107,8 +107,8 @@ import { departmentList, departmentCreate, departmentDelete, departmentUpdate } 
 import { ElMessage } from 'element-plus';
 import dayjs, { Dayjs } from 'dayjs';
 
-// 部门弹窗详细功能
-const departmentTitle = ref('')
+// 部门弹窗标题
+const dialogTitle = ref('')
 
 // 分页
 const paginationData = reactive({
@@ -151,12 +151,12 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
-            departmentTitle.value = '部门编辑'
+            dialogTitle.value = '部门编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
             form.createdAt = dayjs(form.createdAt).format('YYYY-MM-DD')
         } else {
-            departmentTitle.value = '添加部门'
-            form.createdAt = new Date().toLocaleString();
+            dialogTitle.value = '添加部门'
+            form.createdAt = new Date().toLocaleString()
         }
     })
 } 
@@ -207,7 +207,7 @@ const confirm = async (formEl) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             // 添加部门
-            if (departmentTitle.value === '添加部门') {
+            if (dialogTitle.value === '添加部门') {
                 departmentCreate(form).then(({ data }) => {
                     if (data.code === 0) {
                         ElMessage.success('提交成功')

@@ -61,7 +61,7 @@
         <el-dialog
             v-model="dialogFormVisable"
             :before-close="beforeClose"
-            title="员工添加"
+            :title="stuffTitle"
             width="500"
         >
             <!-- 未就职员工筛选 -->
@@ -144,13 +144,16 @@
 import { ref, reactive, nextTick, onMounted, watch } from 'vue'
 import { stuffList, stuffCreate, nonEmployeeList, stuffDel, userList } from '@/api'
 import { departmentList } from '@/api'
-import { ElMessage } from 'element-plus'
+import { dayjs, ElMessage } from 'element-plus'
 
 // 员工分页
 const stuffPaginationData = reactive({
     page: 1,
     page_size: 5,
 })
+
+// 员工弹框标题
+const stuffTitle = ref('')
 
 // 员工筛选项
 const query = reactive({
@@ -206,6 +209,14 @@ const getStuffData = () => {
             stuffData.total = total
             ElMessage.success('获取员工列表成功')
             console.log('员工列表:', stuffData)
+            try{
+                stuffData.list.forEach(item => {
+                    item.create_time = dayjs(item.create_time).format('YYYY-MM-DD')
+                });
+            } catch {
+                console.log('暂无用户')
+                // 此处可添加无部门时部门编码问题
+            }
         }
         else {
             ElMessage.warning('获取员工列表失败')
@@ -268,9 +279,12 @@ const open = (rowData = {}) => {
     dialogFormVisable.value = true
     nextTick(() => {
         if (rowData) {
+            stuffTitle.value = '员工编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
+            form.create_time = dayjs(form.create_time).format('YYYY-MM-DD')
         } else {
-            form.enter = new Date().toLocaleString();
+            stuffTitle.value = '添加部门'
+            form.create_time = new Date().toLocaleString()
         }
     })
 } 
@@ -283,7 +297,13 @@ const edit = (rowData) => {
 
 // 删除表单
 const cancel = (rowData) => {
-
+    stuffDel(rowData.stuff_id).then(({ data }) => {
+        if (data.code === 0) {
+            ElMessage.success('删除成功')
+            getStuffData()
+            getNonuserData()
+        }
+    })
 }
 
 // 弹框是否可视
@@ -314,7 +334,8 @@ const confirm = async (formEl) => {
                 if (data.code === 0) {
                     ElMessage.success('表单提交成功成功')
                     beforeClose()
-                    getListData()
+                    getStuffData()
+                    getNonuserData()
                 } else {
                     ElMessage.warning('表单提交错误')
                 }

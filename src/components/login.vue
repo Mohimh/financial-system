@@ -325,7 +325,6 @@ const submitForm = async(formEl) => {
         if (valid) {
             // 用户名登录
             if (formPage.value === 0) {
-                console.log(idLoginForm.userName)
                 login(idLoginForm).then(({ data }) => {
                     if(data.code === 0) {
                         ElMessage.success('登录成功')
@@ -340,7 +339,6 @@ const submitForm = async(formEl) => {
             // 邮箱登录
                 console.log(emailLoginForm.email)
                 login(emailLoginForm).then(({ data }) => {
-                    console.log('登陆前邮箱', emailLoginForm.email)
                     if(data.code === 0) {
                         ElMessage.success('登录成功！')
                         console.log(data)
