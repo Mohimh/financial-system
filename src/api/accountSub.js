@@ -1,5 +1,10 @@
 import request from '../utils/request'
 
+// 查询科目类型列表
+export const accountSubTypeList = () => {
+    return request.get('/finance/chartOfAccounts/type/list')
+}
+
 // 查看会计科目
 export const accountSubList = (params) => {
     return request.get('/finance/chartOfAccounts/list', { params })

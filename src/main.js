@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 // 路由守卫
@@ -22,13 +23,13 @@ router.beforeEach((to, from) => {
 
 const app = createApp(App)
 
-app.use(ElementPlus)
+app.use(ElementPlus, {
+    locale: zhCn,
+})
 // 路由挂载
 app.use(router)
 app.use(store)
 app.mount('#app')
-
-console.log('router:', router);
 
 // ElementPlus组件内容
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

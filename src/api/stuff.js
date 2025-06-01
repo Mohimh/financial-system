@@ -15,6 +15,11 @@ export const userList = (id) => {
     return request.get(`/user/${id}`)
 }
 
+// 获取员工详情信息
+export const stuffDetailList = (id) => {
+    return request.get(`/stuff/${id}`)
+}
+
 // 创建员工
 export const stuffCreate = (data) => {
     return request.post('/stuff', data)

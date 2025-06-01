@@ -49,7 +49,7 @@
             />
         </div>
         <el-dialog
-            v-model="dialogFormVisable"
+            v-model="dialogFormVisible"
             :before-close="beforeClose"
             :title="dialogTitle"
             width="400"
@@ -92,7 +92,7 @@
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="info" @click="dialogFormVisable=false">取消</el-button>
+                    <el-button type="info" @click="dialogFormVisible=false">取消</el-button>
                     <el-button type="primary" @click="confirm(formRef)">确认</el-button>
                 </div>
             </template>
@@ -104,8 +104,7 @@
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
 import { departmentList, departmentCreate, departmentDelete, departmentUpdate } from '@/api'
-import { ElMessage } from 'element-plus';
-import dayjs, { Dayjs } from 'dayjs';
+import { dayjs, ElMessage } from 'element-plus';
 
 // 部门弹窗标题
 const dialogTitle = ref('')
@@ -148,21 +147,21 @@ const getListData = () => {
 }
 
 const open = (rowData = {}) => {
-    dialogFormVisable.value = true
+    dialogFormVisible.value = true
     nextTick(() => {
         if (rowData) {
             dialogTitle.value = '部门编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
-            form.createdAt = dayjs(form.createdAt).format('YYYY-MM-DD')
+            // form.createdAt = dayjs(form.createdAt).format('YYYY-MM-DD')
         } else {
             dialogTitle.value = '添加部门'
-            form.createdAt = new Date().toLocaleString()
+            // form.createdAt = new Date().toLocaleString()
         }
     })
 } 
 
 const edit = (rowData) => {
-    dialogFormVisable.value = true
+    dialogFormVisible.value = true
     open(rowData)
     console.log(rowData)
 }
@@ -176,10 +175,10 @@ const cancel = (rowData) => {
     })
 }
 
-const dialogFormVisable = ref(false)
+const dialogFormVisible = ref(false)
 
 const beforeClose = () => {
-    dialogFormVisable.value = false
+    dialogFormVisible.value = false
     formRef.value.resetFields()
 }
 

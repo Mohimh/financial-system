@@ -8,7 +8,7 @@
         <el-table :data="tableData.list" border stripe style="width: auto">
             <el-table-column prop="account_code" label="科目编码" />
             <el-table-column prop="account_name" label="科目名称" />
-            <el-table-column prop="account_type" label="科目类型" />
+            <el-table-column prop="account_type_name" label="科目类型" />
             <el-table-column prop="parent_id" label="父科目id" />
             <el-table-column prop="status" label="状态" />
             <el-table-column prop="created_at" label="创建时间" />
@@ -41,7 +41,7 @@
         </div>
 
         <el-dialog 
-            v-model="dialogFormVisable"
+            v-model="dialogFormVisible"
             :before-close="beforeClose"
             :title="dialogTitle" 
             width="400"
@@ -50,6 +50,8 @@
                 :model="form" 
                 :rules="rules" 
                 ref="formRef"
+                label-width="100px"
+                label-position="left"
             >
                 <el-form-item label="科目编码" prop="account_code">
                     <el-input v-model="form.account_code" />
@@ -57,21 +59,21 @@
                 <el-form-item label="科目名称" prop="account_name">
                     <el-input v-model="form.account_name" />
                 </el-form-item>
-                <el-form-item label="科目类型" prop="type">
+                <el-form-item label="科目类型" prop="account_type">
                     <el-select 
-                        v-model="form.type"
+                        v-model="form.account_type"
                         placeholder="请选择科目"
                         style="width: 240px"
                     >
                         <el-option 
-                            v-for="item in ACCOUNTMANAGE_OPTIONS"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                            v-for="item in TYPES"
+                            :key="item.code"
+                            :label="item.type"
+                            :value="item.code"
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item prop="status" label="会计科目状态">
+                <el-form-item prop="status" label="科目状态">
                     <el-switch
                         v-model="form.status"
                         inline-prompt
@@ -84,7 +86,7 @@
                 </el-form-item>
             </el-form>
             <template #footer>
-                <el-button type="info" @click="dialogFormVisable=false">取消</el-button>
+                <el-button type="info" @click="dialogFormVisible=false">取消</el-button>
                 <el-button type="primary" @click="confirm(formRef)">确认</el-button>
             </template>
         </el-dialog>
@@ -92,8 +94,9 @@
 </template>
 
 <script setup>
-import { accountSubCreate, accountSubDelete, accountSubList, accountSubUpdate } from '@/api';
+import { accountSubCreate, accountSubDelete, accountSubList, accountSubUpdate, accountSubTypeList } from '@/api';
 import { ref, reactive, nextTick, onMounted } from 'vue';
+import { dayjs, ElMessage } from 'element-plus';
 
 const dialogTitle = ref('')
 
@@ -102,13 +105,16 @@ const paginationData = reactive({
     page_size: 5,
 })
 
-const tableData = ({
+const tableData = reactive({
     list: [],
     total: 0,
 })
 
+let TYPES = ref([])
+
 onMounted(() => {
     getListData()
+    getAccountSubType()
 })
 
 const getListData = () => {
@@ -117,18 +123,26 @@ const getListData = () => {
         tableData.list = accounts
         tableData.total = total
         try{
-                tableData.list.forEach(item => {
-                    item.created_at = dayjs(item.created_at).format('YYYY-MM-DD')
-                })
-            } catch {
-                console.log('暂无会计科目')
-            }
-            console.log('会计科目:', tableData)
+            tableData.list.forEach(item => {
+                item.created_at = dayjs(item.created_at).format('YYYY-MM-DD')
+            })
+        } catch {
+            console.log('暂无会计科目')
+        }
+        console.log('会计科目:', tableData)
+            
+    })
+}
+
+const getAccountSubType = () => {
+    accountSubTypeList().then(({ data }) => {
+        const { types, total } = data.data
+        TYPES = types
     })
 }
 
 const open = (rowData = {}) => {
-    dialogFormVisable.value = true
+    dialogFormVisible.value = true
     nextTick(() => {
         if (rowData) {
             dialogTitle.value = '会计科目编辑'
@@ -140,13 +154,13 @@ const open = (rowData = {}) => {
 } 
 
 const edit = (rowData) => {
-    dialogFormVisable.value = true
+    dialogFormVisible.value = true
     open(rowData)
     console.log(rowData)
 }
 
 const cancel = (rowData) => {
-    accountDelete(rowData.id).then(({ data }) => {
+    accountSubDelete(rowData.id).then(({ data }) => {
         if (data.code === 0) {
             ElMessage.success('删除成功')
             getListData()
@@ -154,10 +168,10 @@ const cancel = (rowData) => {
     })
 }
 
-const dialogFormVisable = ref(false)
+const dialogFormVisible = ref(false)
 
 const beforeClose = () => {
-    dialogFormVisable.value = false
+    dialogFormVisible.value = false
     formRef.value.resetFields()
 }
 
@@ -176,6 +190,7 @@ const form = reactive({
     account_type: null,
     parent_id: null,
     status: 1,
+    created_at: '',
 })
 
 const confirm = async (formEl) => {

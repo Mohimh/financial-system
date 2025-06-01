@@ -59,7 +59,7 @@
             />
         </div>
         <el-dialog
-            v-model="dialogFormVisable"
+            v-model="dialogFormVisible"
             :before-close="beforeClose"
             :title="stuffTitle"
             width="500"
@@ -142,8 +142,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted, watch } from 'vue'
-import { stuffList, stuffCreate, nonEmployeeList, stuffDel, userList } from '@/api'
-import { departmentList } from '@/api'
+import { stuffList, stuffCreate, nonEmployeeList, stuffDel, userList, departmentActiveList } from '@/api'
 import { dayjs, ElMessage } from 'element-plus'
 
 // 员工分页
@@ -207,7 +206,6 @@ const getStuffData = () => {
             const { stuffs, total } = data.data
             stuffData.list = stuffs
             stuffData.total = total
-            ElMessage.success('获取员工列表成功')
             console.log('员工列表:', stuffData)
             try{
                 stuffData.list.forEach(item => {
@@ -237,7 +235,6 @@ const getNonuserData = () => {
                     nonUserData.total += 1
                 }
             });
-            ElMessage.success('获取未入职人员列表成功')
             console.log('未入职人员列表:', nonUserData)
         }
         else {
@@ -248,12 +245,11 @@ const getNonuserData = () => {
 
 // 请求部门列表
 const getDepartmentData = () => {
-    departmentList().then(({ data }) => {
+    departmentActiveList().then(({ data }) => {
         if (data.code === 0) {
             const { list, total } = data.data
             DEPARTMENT_OPTIONS.list = list
             DEPARTMENT_OPTIONS.total = total
-            ElMessage.success('获取部门列表请求成功')
             console.log('部门信息:', DEPARTMENT_OPTIONS)
         }
         else {
@@ -276,7 +272,7 @@ const handleUserSelect = (id) => {
 
 // 表单打开逻辑
 const open = (rowData = {}) => {
-    dialogFormVisable.value = true
+    dialogFormVisible.value = true
     nextTick(() => {
         if (rowData) {
             stuffTitle.value = '员工编辑'
@@ -291,7 +287,7 @@ const open = (rowData = {}) => {
 
 // 编辑表单
 const edit = (rowData) => {
-    dialogFormVisable.value = true
+    dialogFormVisible.value = true
     open(rowData)
 }
 
@@ -307,11 +303,11 @@ const cancel = (rowData) => {
 }
 
 // 弹框是否可视
-const dialogFormVisable = ref(false)
+const dialogFormVisible = ref(false)
 
 // 关闭弹框
 const beforeClose = () => {
-    dialogFormVisable.value = false
+    dialogFormVisible.value = false
     formRef.value.resetFields()
     Object.keys(query).forEach(key => delete query[key])
     query.sex = '男'

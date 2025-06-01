@@ -10,6 +10,11 @@ export const departmentList = (params) => {
     return request.get('/department/list', { params })
 }
 
+// 获取正常状态部门列表
+export const departmentActiveList = () => {
+    return request.get('/department/active/list')
+}
+
 // 创建部门
 export const departmentCreate = (data) => {
     return request.post('/department/create', data)
