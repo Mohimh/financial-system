@@ -7,10 +7,10 @@
             新增
         </el-button>
 
-        <el-table :data="tableData.list" border stripe style="width: auto">
+        <el-table :data="tableData.list" border stripe style="width: auto;">
             <el-table-column prop="month" label="月份" />
-            <el-table-column prop="department_id" label="部门" />
-            <el-table-column prop="employee_id" label="员工" />
+            <el-table-column prop="department_name" label="部门" />
+            <el-table-column prop="employee_name" label="员工" />
             <el-table-column prop="base_salary" label="基本工资" />
             <!-- <el-table-column prop="allowance" label="津贴" /> -->
             <!-- <el-table-column prop="overtime_pay" label="加班费" /> -->
@@ -29,11 +29,17 @@
             <el-table-column prop="payment_date" label="支付日期" />
             <el-table-column label="操作" width="200px">
                 <template #default="{ row }">
-                    <el-link :underline="false" type="primary" @click="check(row)">
-                        <el-icon>
-                            <EditPen />
-                        </el-icon>
-                        查看详情
+                    <el-link :underline="false" type="info" @click="check(row)">
+                        <el-icon><View /></el-icon>
+                        查看
+                    </el-link>
+                    <el-link :underline="false" type="primary" @click="edit(row)">
+                        <el-icon><EditPen /></el-icon>
+                        编辑
+                    </el-link>
+                    <el-link :underline="false" type="danger" @click="cancel(row)">
+                        <el-icon><Delete /></el-icon>
+                        删除
                     </el-link>
                 </template>
             </el-table-column>
@@ -157,7 +163,7 @@ const paginationData = reactive({
 })
 
 // 测试数据
-const tableData = ({
+const tableData = reactive({
     list: [],
     total: 0
 })
@@ -178,11 +184,14 @@ const getListData = () => {
                 tableData.list.forEach(item => {
                     item.created_at = dayjs(item.created_at).format('YYYY-MM-DD')
                 });
+                tableData.list.forEach(item => {
+                    item.payment_date = dayjs(item.payment_date).format('YYYY-MM-DD')
+                });
             } catch {
-                console.log('暂无无部门')
+                console.log('暂无无工资信息')
                 // 此处可添加无部门时部门编码问题
             }
-            console.log('部门列表:', tableData)
+            console.log('工资信息列表:', tableData)
         }
     })
 }
@@ -216,7 +225,7 @@ const stuffChange = () => {
     departmentSelect.value = true
     stuffDetailList(form.employee_id).then(({data}) => {
         if (data.code === 0) {
-            form.department = data.data.department_id
+            form.department_id = data.data.department_id
         }
     })
 }
@@ -235,7 +244,6 @@ const open = (rowData = {}) => {
     dialogFormVisible.value = true
     nextTick(() => {
         if (rowData) {
-            dialogTitle.value = '工资信息编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
         } else {
             dialogTitle.value = '添加工资信息'
@@ -243,20 +251,33 @@ const open = (rowData = {}) => {
     })
 }
 
+const check = (rowData) => {
+    dialogFormVisible.value 
+    dialogTitle.value = '工资信息查看'
+    open(rowData)
+}
+
 const edit = (rowData) => {
     dialogFormVisible.value = true
+    dialogTitle.value = '工资信息编辑'
     open(rowData)
     console.log(rowData)
 }
 
 const cancel = (rowData) => {
-
+    salaryDel(rowData.id).then(({ data }) => {
+        if (data.code === 0) {
+            ElMessage.success('删除成功')
+            getListData()
+        }
+    })
 }
 
 const dialogFormVisible = ref(false)
 
 const beforeClose = () => {
     dialogFormVisible.value = false
+    departmentSelect.value = false
     formRef.value.resetFields()
 }
 
@@ -283,16 +304,16 @@ const form = reactive({
 })
 const formRef = ref()
 
-const calculateTotal = computed(() => {
-    return (
-        (form.base_salary || 0) +
-        (form.allowance || 0) +
-        (form.bonus || 0) +
-        (form.performance_salary || 0) +
-        (form.overtime_pay || 0) -
-        (form.deduction || 0)
-    )
-})
+// const calculateTotal = computed(() => {
+//     return (
+//         (form.base_salary || 0) +
+//         (form.allowance || 0) +
+//         (form.bonus || 0) +
+//         (form.performance_salary || 0) +
+//         (form.overtime_pay || 0) -
+//         (form.deduction || 0)
+//     )
+// })
 
 const confirm = async (formEl) => {
     form.year = parseInt(dayjs(form.date).format('YYYY'), 10)
@@ -316,8 +337,15 @@ const confirm = async (formEl) => {
     })
 }
 
-const handleSizeChange = () => { }
-const handleCurrentChange = () => { }
+const handleSizeChange = (val) => {
+    paginationData.page_size = val
+    paginationData.page = 1 // 关键！修改每页大小后必须回到第一页
+    getListData()
+}
+const handleCurrentChange = (val) => {
+    paginationData.page = val
+    getListData()
+}
 </script>
 
 <style lang="less" scoped>

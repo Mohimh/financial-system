@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 // 获取部门详情
 export const departmentDetail = (id) => {

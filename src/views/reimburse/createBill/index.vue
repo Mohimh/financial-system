@@ -64,7 +64,7 @@ import { reactive } from 'vue';
 // 分页
 const paginationData = reactive({
     pageNum: 1,
-    pageSize: 10
+    pageSize: 5
 })
 
 const DEPARTMENT_OPTIONS = [
@@ -72,41 +72,19 @@ const DEPARTMENT_OPTIONS = [
     { value: 2, label: '销售部' }
 ]
 
-const tableData = ({
-    list: [
-        {
-            department: '研发部',
-            topic: '团建费用报销',
-            type: '1',
-            certificate: '图片',
-            money: 2000,
-            content: '无',
-            applicant: '张小斐',
-            state: '0',
-            examine: '0',
-            submitDate: '2024-11-17'
-        },
-        {
-            department: '研发部',
-            topic: '采购电脑',
-            type: '2',
-            certificate: '图片',
-            money: 50000,
-            content: '无',
-            applicant: '张小斐',
-            state: '1',
-            examine: '1',
-            submitDate: '2024-11-17'
-        }
-    ],
-    total: 10
+const tableData = reactive({
+    list: [],
+    total: 0,
 })
 
-const handleSizeChange = () => {
-
+const handleSizeChange = (val) => {
+    paginationData.page_size = val
+    paginationData.page = 1 // 关键！修改每页大小后必须回到第一页
+    getListData()
 }
-const handleCurrentChange = () => {
-    
+const handleCurrentChange = (val) => {
+    paginationData.page = val
+    getListData()
 }
 </script>
 

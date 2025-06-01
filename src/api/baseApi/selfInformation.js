@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 // 修改用户信息接口
 export const updateUserInfo = (id, data) => {

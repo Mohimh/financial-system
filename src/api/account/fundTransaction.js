@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 // 查询资金流水列表
 export const fundList = () => {

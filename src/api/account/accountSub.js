@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../../utils/request'
 
 // 查询科目类型列表
 export const accountSubTypeList = () => {
