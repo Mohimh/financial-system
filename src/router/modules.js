@@ -17,6 +17,7 @@ import AnalysisCompare from '@/views/budget/analysisCompare/index.vue'
 
 import CreateBill from '@/views/reimburse/createBill/index.vue'
 import ApprovalFlow from '@/views/reimburse/approvalFlow/index.vue'
+import ReimbursementManage from '@/views/reimburse/reimbursementManage/index.vue'
 import StatReport from '@/views/reimburse/statReport/index.vue'
 
 import KpiDashboard from '@/views/financeAnalytics/kpiDashboard/index.vue'
@@ -129,8 +130,13 @@ children: [
         component: ApprovalFlow
         },
         {
+        path: 'reimbursementManage',
+        meta: { id: '3', name: '报销单管理', path: '/reimburse/reimbursementManage' },
+        component: ReimbursementManage
+        },
+        {
         path: 'statReport',
-        meta: { id: '3', name: '报销统计分析', path: '/reimburse/statReport' },
+        meta: { id: '4', name: '报销统计分析', path: '/reimburse/statReport' },
         component: StatReport
         },
     ]

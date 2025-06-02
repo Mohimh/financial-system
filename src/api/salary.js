@@ -16,7 +16,7 @@ export const salaryUpdate = (id, data) => {
 }
 
 // 删除工资记录
-export const salaryDel = (id, data) => {
-    return request.delete(`/salary/${id}`, data)
+export const salaryDel = (id) => {
+    return request.delete(`/salary/${id}`)
 }
 

@@ -10,7 +10,17 @@
             <el-table-column prop="account_name" label="账户名称" />
             <el-table-column prop="account_type_name" label="账户类型" />
             <el-table-column prop="balance" label="当前余额" />
-            <el-table-column prop="status" label="状态" />
+            <el-table-column prop="status" label="状态">
+                <template #default="{ row }">
+                    <el-switch
+                        v-model="row.status"
+                        disabled
+                        :active-value=1
+                        :inactive-value=2
+                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                    />
+                </template>
+            </el-table-column>
             <el-table-column prop="created_at" label="创建时间" />
             <el-table-column label="操作" width="150">
                 <template #default="{ row }">

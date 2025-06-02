@@ -7,5 +7,5 @@ export const reimburseList = (params) => {
 
 // 创建报销单
 export const reimburseCreate = (data) => {
-    return request.get('/reimburse/create', data)
+    return request.post('/reimburse/create', data)
 }

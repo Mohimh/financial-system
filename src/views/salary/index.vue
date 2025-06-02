@@ -20,8 +20,8 @@
             <el-table-column prop="total_salary" label="工资合计" />
             <el-table-column label="状态">
                 <template #default="{ row }">
-                    <el-tag :type="row.state === '0' ? 'info' : 'success'">
-                        {{ row.state === '0' ? '待发放' : '已发放' }}
+                    <el-tag :type="row.status === 0 ? 'info' : 'success'">
+                        {{ row.status === 0 ? '待发放' : '已发放' }}
                     </el-tag>
                 </template>
             </el-table-column>
@@ -79,10 +79,8 @@
                                 v-model="form.department_id" 
                                 placeholder="请选择部门" 
                                 style="width: 240px"
-                                :disabled="departmentSelect"
                                 @change="departmentChange"
                             >
-                                <!-- :disabled="departmentSelect" -->
                                 <el-option 
                                     v-for="item in DEPARTMENT_OPTIONS" 
                                     :key="item.id" 
@@ -113,25 +111,25 @@
 
                     <el-col :span="12">
                         <el-form-item prop="base_salary" label="基本工资">
-                            <el-input v-model.number="form.base_salary" type="text" placeholder="请输入基本工资" />
+                            <el-input v-model.number="form.base_salary" type="number" placeholder="请输入基本工资" />
                         </el-form-item>
                         <el-form-item prop="overtime_pay" label="加班费">
-                            <el-input v-model.number="form.overtime_pay" type="text" placeholder="请输入加班费" />
+                            <el-input v-model.number="form.overtime_pay" type="number" placeholder="请输入加班费" />
                         </el-form-item>
                         <el-form-item prop="allowance" label="津贴">
-                            <el-input v-model.number="form.allowance" type="text" placeholder="请输入津贴" />
+                            <el-input v-model.number="form.allowance" type="number" placeholder="请输入津贴" />
                         </el-form-item>
                         <el-form-item prop="bonus" label="奖金">
-                            <el-input v-model.number="form.bonus" type="text" placeholder="请输入奖金" />
+                            <el-input v-model.number="form.bonus" type="number" placeholder="请输入奖金" />
                         </el-form-item>
                         <el-form-item prop="performance_salary" label="绩效工资">
-                            <el-input v-model.number="form.performance_salary" type="text" placeholder="请输入绩效工资" />
+                            <el-input v-model.number="form.performance_salary" type="number" placeholder="请输入绩效工资" />
                         </el-form-item>
                         <el-form-item prop="deduction" label="扣除金额">
-                            <el-input v-model.number="form.deduct" type="text" placeholder="请输入扣除金额" />
+                            <el-input v-model.number="form.deduct" type="number" placeholder="请输入扣除金额" />
                         </el-form-item>
                         <el-form-item label="工资合计">
-                            <el-input :value="calculateTotal" disabled />
+                            <!-- <el-input :value="calculateTotal" disabled /> -->
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -149,8 +147,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, computed, onMounted } from 'vue'
-import { stuffList, departmentList, stuffDetailList } from '@/api'
-import { salaryCreate, salaryList } from '@/api/salary'
+import { stuffList, departmentList, stuffDetailList, salaryList, salaryDel, salaryCreate } from '@/api'
 import { dayjs, ElMessage } from 'element-plus'
 
 // 弹框信息
@@ -220,9 +217,7 @@ const getStuffData = () => {
     })
 }
 
-const departmentSelect = ref(false)
 const stuffChange = () => {
-    departmentSelect.value = true
     stuffDetailList(form.employee_id).then(({data}) => {
         if (data.code === 0) {
             form.department_id = data.data.department_id
@@ -236,6 +231,7 @@ const departmentChange = () => {
             console.log('筛选后的stuff:', data.data)
             STUFF_OPTIONS.value = stuffs
             console.log("部门筛选后的stuff:", STUFF_OPTIONS.value)
+            form.employee_id = ''
         }
     })
 }
@@ -277,7 +273,6 @@ const dialogFormVisible = ref(false)
 
 const beforeClose = () => {
     dialogFormVisible.value = false
-    departmentSelect.value = false
     formRef.value.resetFields()
 }
 
@@ -351,7 +346,7 @@ const handleCurrentChange = (val) => {
 <style lang="less" scoped>
 .salary-table {
     background-color: #fff;
-
+    
     .el-button {
         margin: 15px 20px;
     }
