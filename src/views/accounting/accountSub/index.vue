@@ -148,6 +148,8 @@ const getAccountSubType = () => {
     accountSubTypeList().then(({ data }) => {
         const { types, total } = data.data
         TYPES = types
+        console.log("types:", types);
+        
     })
 }
 

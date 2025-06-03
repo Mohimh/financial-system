@@ -2,7 +2,7 @@
     <el-form :model="form" label-width="120px" class="reimbursement-form">
         <!-- 基本信息 -->
         <el-form-item label="申请人ID">
-            <el-input v-model.number="form.applicant_id" type="number" placeholder="请输入申请人ID" />
+            <el-input v-model="user.real_name" type="text" disabled placeholder="请输入申请人ID" />
         </el-form-item>
 
         <el-form-item label="报销描述">
@@ -61,9 +61,12 @@ import { reimburseCreate } from '@/api';
 import { ElMessage } from 'element-plus';
 import { ref } from 'vue';
 
+const user = JSON.parse(localStorage.getItem('fs_user'))
+
 const form = ref({
     applicant_id: null,
     description: '',
+    apply_date: '',
     items: [
         {
             amount: 0,
@@ -121,13 +124,14 @@ const onReset = () => {
 
 <style scoped lang="less">
 .reimbursement-form {
+    background-color: #fff;
     max-width: 1000px;
     margin: 20px auto;
 
     .items-container {
         margin: 20px 0;
         padding: 15px;
-        background: #f5f7fa;
+        // background: #f5f7fa;
         border-radius: 4px;
     }
 
