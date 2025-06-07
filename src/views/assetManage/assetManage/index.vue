@@ -6,11 +6,13 @@
             新增
         </el-button>
         <el-table :data="tableData.list" border stripe style="width: auto;">
-            <el-table-column prop="code" label="部门编码"/>
-            <el-table-column prop="name" label="名称"/>
-            <el-table-column prop="manager" label="部门负责人"/>
-            <el-table-column prop="description" label="备注"/>
-            <el-table-column prop="createdAt" label="录入时间"/>
+            <el-table-column prop="asset_code" label="资产编号"/>
+            <el-table-column prop="asset_category" label="资产类型"/>
+            <el-table-column prop="asset_name" label="资产名称"/>
+            <el-table-column prop="purchase_date" label="购买时间"/>
+            <el-table-column prop="purchase_price" label="购买金额"/>
+            <el-table-column prop="expected_useful_life" label="预计使用年限(月)"/>
+            <el-table-column prop="remark" label="备注"/>
             <el-table-column prop="status" label="状态">
                 <template #default="{ row }">
                     <el-switch

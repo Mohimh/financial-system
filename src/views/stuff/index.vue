@@ -276,6 +276,7 @@ const open = (rowData = {}) => {
     nextTick(() => {
         if (rowData) {
             stuffTitle.value = '员工编辑'
+            query.id = rowData.user_id
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
             form.create_time = dayjs(form.create_time).format('YYYY-MM-DD')
         } else {
@@ -322,24 +323,24 @@ const rules = reactive({
 const confirm = async (formEl) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
-        if (valid) {
-            form.job_number = `00${query.id}`
-            form.user_id = query.id
-            console.log('form:', form)
-            stuffCreate(form).then(({ data }) => {
-                if (data.code === 0) {
-                    ElMessage.success('表单提交成功成功')
-                    beforeClose()
-                    getStuffData()
-                    getNonuserData()
-                } else {
-                    ElMessage.warning('表单提交错误')
-                }
-            })
-        }
-        else {
-            console.log('Error submit', fields)
-        }
+        // if (valid) {
+        //     form.job_number = `00${query.id}`
+        //     form.user_id = query.id
+        //     console.log('form:', form)
+        //     stuffCreate(form).then(({ data }) => {
+        //         if (data.code === 0) {
+        //             ElMessage.success('表单提交成功成功')
+        //             beforeClose()
+        //             getStuffData()
+        //             getNonuserData()
+        //         } else {
+        //             ElMessage.warning('表单提交错误')
+        //         }
+        //     })
+        // }
+        // else {
+        //     console.log('Error submit', fields)
+        // }
     })
 }
 

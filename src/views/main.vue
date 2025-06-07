@@ -85,7 +85,7 @@ const submitDialogForm = async (formEl) => {
                 if (data.code === 0) {
                     ElMessage.success('填写成功，欢迎进入财务管理系统')
                     dialogFormVisible.value = false
-                    
+                    localStorage.setItem('fs_user', JSON.stringify(data.data.user))
                     router.push('/home')
                 }
             })
