@@ -132,6 +132,16 @@ const tagStatus = ref([
         value: 3,
         type: 'danger'
     },
+    {
+        label: '已通过',
+        value: 4,
+        type: 'success'
+    },
+    {
+        label: '已拒绝',
+        value: 5,
+        type: 'danger'
+    },
 ])
 
 const user = JSON.parse(localStorage.getItem('fs_user'))
@@ -144,6 +154,11 @@ const getListData = () => {
             tableData.total = total
             try {
                 tableData.list.forEach(item => {
+                    if (item.reimbursement.status === 2) {
+                        if (user.id === 1) {
+                            item.reimbursement.status = 1
+                        }
+                    }
                     item.approve_time = dayjs(item.approve_time).format('YYYY-MM-DD')
                     item.apply_date = dayjs(item.apply_date).format('YYYY-MM-DD')
                     if (item.approve_time === '2006-01-02') {
@@ -197,7 +212,18 @@ const confirm = async (formEl) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             if (user.id === 1) {
-
+                form.steps = 2
+                form.status = 2
+                reimburseApproval(form.id, form).then(({ data }) => {
+                    if (data.code === 0) {
+                        ElMessage.success('审核成功')
+                        beforeClose()
+                        getListData()
+                    }
+                    else {
+                        ElMessage.warning('错误')
+                    }
+                })
             }
             else {
                 form.steps = 1
@@ -225,7 +251,18 @@ const cancel = async (formEl) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             if (user.id === 1) {
-
+                form.steps = 2
+                form.status = 3
+                reimburseApproval(form.id, form).then(({ data }) => {
+                    if (data.code === 0) {
+                        ElMessage.success('驳回成功')
+                        beforeClose()
+                        getListData()
+                    }
+                    else {
+                        ElMessage.warning('错误')
+                    }
+                })
             }
             else {
                 form.steps = 1

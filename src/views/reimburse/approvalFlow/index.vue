@@ -28,7 +28,7 @@
                         <h3 style="padding-bottom: 10px;">{{ item.reimbursement.description }}</h3>
                         <div>
                             <div style="padding: 5px 0;">
-                                申请人：{{ item.reimbursement.applicant_name }}
+                                申请人：{{ item.applicant_name }}
                             </div>
                             <div style="padding: 5px 0;">
                                 总金额：¥{{ item.reimbursement.total_amount }}
@@ -36,27 +36,32 @@
                         </div>
                     </div>
                     <div>
-                        <el-tag :type="statusMap[item.reimbursement.status - 1].tagType">
+                        <el-tag style="margin: 5px 0;" :type="statusMap[item.reimbursement.status - 1].tagType">
                             {{ statusMap[item.reimbursement.status - 1].text }}
                         </el-tag>
-                        <el-row style="padding: 5px 0;" justify="space-between" v-if="item.processes[0]">
+                        <el-row v-if="item.processes && item.processes.length > 0" style="padding: 5px 0;" justify="space-between">
                             <el-col :span="12">管理员审批：{{ item.processes[0].approver_id }}</el-col>
-                            <el-col :span="6"><el-button>查看管理员建议</el-button></el-col>
+                            <el-col :span="6"><el-button size="small">查看管理员建议</el-button></el-col>
                         </el-row>
-                        <el-row style="padding: 5px 0;" justify="space-between" v-else-if="item.processes[1]">
+                        <el-row v-if="item.processes && item.processes.length > 1" style="padding: 5px 0;" justify="space-between">
                             <el-col :span="12">领导审批：{{ item.processes[1].approver_id }}</el-col>
-                            <el-col :span="6"><el-button>查看领导建议</el-button></el-col>
+                            <el-col :span="6"><el-button size="small">查看领导建议</el-button></el-col>
                         </el-row>
                     </div>
 
                     <el-collapse>
                         <el-collapse-item title="审批进度详情">
-                            <el-steps :active="item.processes.steps" align-center>
+                            <el-steps :active="item.processes" align-center>
+                                <el-step
+                                    v-if="!item.processes"
+                                    title="待审核"
+                                    description="待审核"
+                                />
                                 <el-step 
-                                    v-for="(step, i) in item.processes.steps" 
-                                    :key="i" 
-                                    :title="step.name" 
-                                    :description="step.time || '待处理'" 
+                                    v-for="step in item.processes" 
+                                    :key="step.id" 
+                                    :title="step" 
+                                    :description="step.process_time || '待审核'" 
                                 />
                             </el-steps>
                         </el-collapse-item>
@@ -89,6 +94,8 @@ const statusOptions = [
 
 const statusMap = [
     { text: '审批中', type: 'primary', tagType: 'warning', color: '#e6a23c' },
+    { text: '审批中', type: 'primary', tagType: 'warning', color: '#e6a23c' },
+    { text: '已驳回', type: 'danger', tagType: 'danger', color: '#f56c6c' },
     { text: '已通过', type: 'success', tagType: 'success', color: '#67c23a' },
     { text: '已驳回', type: 'danger', tagType: 'danger', color: '#f56c6c' },
 ]
@@ -134,29 +141,6 @@ const getListData = () => {
     })
 }
 
-
-
-// const processList = ref([
-//     {
-//         id: '202307001',
-//         title: '北京出差费用报销',
-//         applicant: '张三',
-//         amount: 2560.5,
-//         createTime: '2023-07-01 14:30',
-//         status: 'processing',
-//         currentApprover: '李四（财务部）',
-//         steps: STEPS,
-//         stepActive: 2
-//     }
-// ])
-
-// const filteredList = computed(() => {
-//     return processList.filter(item => {
-//         const matchSearch = item.title.includes(searchKey.value) || item.id.includes(searchKey.value)
-//         const matchStatus = filterStatus.value === 'all' || item.status === filterStatus.value
-//         return matchSearch && matchStatus
-//     })
-// })
 </script>
 
 <style scoped lang="less">

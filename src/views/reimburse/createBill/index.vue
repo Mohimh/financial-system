@@ -49,7 +49,7 @@
             </el-row>
             <!-- 总金额 -->
             <el-form-item label="总金额">
-                <el-input :value="totalSalary" type="number" disabled />
+                <!-- <el-input :value="totalSalary" type="number" disabled /> -->
             </el-form-item>
     
             <!-- 操作按钮 -->
@@ -80,8 +80,7 @@ const form = reactive({
         }
     ],
     total_amount: 0
-});
-
+})
 
 const totalSalary = computed(() => {
     let sum = 0
@@ -122,9 +121,10 @@ const onSubmit = () => {
     form.applicant_id = user.id
     let date = new Date()
     form.apply_date = getISOLocalDateTime(date)
-    form.total_amount = totalSalary.value
-    console.log('表单form:', form);
-    
+    // console.log('totalSalary', totalSalary.value);
+    // form.total_amount = totalSalary.value
+    console.log('表单form:', form)
+
     reimburseCreate(form).then(({ data }) => {
         if (data.code === 0) {
             ElMessage.success('报销单添加成功')
