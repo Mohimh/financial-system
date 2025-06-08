@@ -58,24 +58,21 @@
 </template>
 
 <script setup>
-import { reimburseCreate } from '@/api';
+import { assetList, assetCreate } from '@/api';
 import { ElMessage } from 'element-plus';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 const user = JSON.parse(localStorage.getItem('fs_user'))
 
 const form = reactive({
-    applicant_id: null,
-    description: '',
-    apply_date: '',
-    items: [
-        {
-            amount: null,
-            description: '',
-            type: 1,
-        }
-    ],
-    total_amount: 0
+    asset_code: '',
+    asset_name: '',
+    department_id: '',
+    location: '',
+    purchase_date: '',
+    purchase_price: '',
+    remark: '',
+    user_id: '',
 })
 
 const totalSalary = computed(() => {
