@@ -7,6 +7,7 @@ export * from './account/accountSub'
 export * from './account/fundTransaction'
 export * from './salary'
 export * from './reimburse'
+export * from './assetManage'
 
 
 

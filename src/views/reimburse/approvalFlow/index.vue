@@ -51,17 +51,40 @@
 
                     <el-collapse>
                         <el-collapse-item title="审批进度详情">
-                            <el-steps :active="item.processes" align-center>
-                                <el-step
-                                    v-if="!item.processes"
-                                    title="待审核"
-                                    description="待审核"
-                                />
+                            <el-steps :active="item.processes.length+1" align-center>
                                 <el-step 
-                                    v-for="step in item.processes" 
-                                    :key="step.id" 
-                                    :title="step" 
-                                    :description="step.process_time || '待审核'" 
+                                    title="报销单提交"
+                                    description="已提交"
+                                />
+                                <el-step
+                                    v-if="item.reimbursement.status === 1"
+                                    v-for="i in STEPS[0].value"
+                                    :description="stepsStatus[STEPS[0].status[i]].name"
+                                    :title="STEPSTITLE[i].name"
+                                    />
+                                <el-step
+                                    v-else-if="item.reimbursement.status === 2"
+                                    v-for="i in STEPS[1].value"
+                                    :description="stepsStatus[STEPS[1].status[i]].name"
+                                    :title="STEPSTITLE[i].name"
+                                />
+                                <el-step
+                                    v-else-if="item.reimbursement.status === 3"
+                                    v-for="i in STEPS[2].value"
+                                    :description="stepsStatus[STEPS[2].status[i]].name"
+                                    :title="STEPSTITLE[i].name"
+                                />
+                                <el-step
+                                    v-else-if="item.reimbursement.status === 4"
+                                    v-for="i in STEPS[3].value"
+                                    :description="stepsStatus[STEPS[3].status[i]].name"
+                                    :title="STEPSTITLE[i].name"
+                                />
+                                <el-step
+                                    v-else
+                                    v-for="i in STEPS[4].value"
+                                    :description="stepsStatus[STEPS[4].status[i]].name"
+                                    :title="STEPSTITLE[i].name"
                                 />
                             </el-steps>
                         </el-collapse-item>
@@ -100,10 +123,47 @@ const statusMap = [
     { text: '已驳回', type: 'danger', tagType: 'danger', color: '#f56c6c' },
 ]
 
+const stepsStatus = [
+    {
+        name: '无需审核',
+    },
+    {
+        name: '待审核',
+    },
+    {
+        name: '已通过',
+    },
+    {
+        name: '已驳回',
+    },
+]
+
+const STEPSTITLE = [
+    {name: '管理员审核', value: 1},
+    {name: '经理审核', value: 2},
+]
+
 const STEPS = [
-    { name: '待审核', value: 1 },
-    { name: '已通过', value: 2 },
-    { name: '已驳回', value: 3 },
+    { 
+        value: [0, 1],
+        status: [1, 1],
+    },
+    { 
+        value: [0, 1],
+        status: [2, 1],
+    },
+    { 
+        value: [0, 1],
+        status: [3, 0],
+    },
+    { 
+        value: [0, 1],
+        status: [2, 2],
+    },
+    { 
+        value: [0, 1],
+        status: [2, 3],
+    },
 ]
 
 console.log('statusMap', statusMap);

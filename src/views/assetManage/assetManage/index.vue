@@ -1,14 +1,11 @@
 <template>
     
     <div class="department-table">
-        <el-button type="primary" round size="small" @click="open(null)">
-            <el-icon><CirclePlus/></el-icon>
-            新增
-        </el-button>
         <el-table :data="tableData.list" border stripe style="width: auto;">
             <el-table-column prop="asset_code" label="资产编号"/>
             <el-table-column prop="asset_category" label="资产类型"/>
             <el-table-column prop="asset_name" label="资产名称"/>
+            <el-table-column prop="user_real_name" label="使用人姓名"/>
             <el-table-column prop="purchase_date" label="购买时间"/>
             <el-table-column prop="purchase_price" label="购买金额"/>
             <el-table-column prop="expected_useful_life" label="预计使用年限(月)"/>
@@ -28,12 +25,8 @@
                 <template #default="{ row }">
                     <el-link :underline="false" type="primary" @click="edit(row)">
                     <el-icon><EditPen /></el-icon>
-                    编辑
-                </el-link>
-                <el-link :underline="false" type="danger" @click="cancel(row)">
-                    <el-icon><Delete /></el-icon>
-                    删除
-                </el-link>
+                        查看
+                    </el-link>
                 </template>
             </el-table-column>
         </el-table>
@@ -105,7 +98,7 @@
 
 <script setup>
 import { ref, reactive, nextTick, onMounted } from 'vue'
-import { departmentList, departmentCreate, departmentDelete, departmentUpdate } from '@/api'
+import { departmentList, departmentCreate, departmentDelete, departmentUpdate, assetCreate, assetList } from '@/api'
 import { dayjs, ElMessage } from 'element-plus';
 
 // 部门弹窗标题
@@ -132,20 +125,20 @@ onMounted(() => {
 
 // 请求列表
 const getListData = () => {
-    departmentList(paginationData).then(({ data }) => {
+    assetList(paginationData).then(({ data }) => {
         if (data.code === 0) {
-            const { list, total } = data.data
-            tableData.list = list
+            const { assets, total } = data.data
+            tableData.list = assets
             tableData.total = total
             try{
                 tableData.list.forEach(item => {
                     item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD')
                 });
             } catch {
-                console.log('暂无部门')
+                console.log('暂无固定资产信息')
                 // 此处可添加无部门时部门编码问题
             }
-            console.log('部门列表:', tableData)
+            console.log('固定资产列表:', tableData)
         }
     })
 }
@@ -154,11 +147,10 @@ const open = (rowData = {}) => {
     dialogFormVisible.value = true
     nextTick(() => {
         if (rowData) {
-            dialogTitle.value = '部门编辑'
+            dialogTitle.value = '固定资产编辑'
             Object.assign(form, JSON.parse(JSON.stringify(rowData)))
             // form.createdAt = dayjs(form.createdAt).format('YYYY-MM-DD')
         } else {
-            dialogTitle.value = '添加部门'
             // form.createdAt = new Date().toLocaleString()
         }
     })
@@ -193,13 +185,14 @@ const rules = reactive({
 const formRef = ref()
 
 const form = reactive({
-    code: '',
-    id: '',
-    description: '',
-    manager: '',
-    name: '',
+    asset_code: '',
+    asset_name: '',
+    purchase_date: '',
+    purchase_price: '',
+    remark: '',
+    expected_useful_life: '',
     status: 1,
-    createdAt: '',
+    user_real_name: '',
 })
 
 // 表单提交逻辑
@@ -251,11 +244,12 @@ const handleCurrentChange = (val) => {
 
 .department-table {
     background-color: #fff;
+    padding: 15px;
     .el-button {
-        margin: 15px 20px;
+        margin: 0 20px;
     }
     .el-table {
-        margin: 0 20px;
+        margin: 0 10px;
         .el-link {
             margin: 0 10px;
         }
